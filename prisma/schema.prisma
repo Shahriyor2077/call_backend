@@ -1,0 +1,272 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  SUPERADMIN
+  ADMIN
+  OPERATOR
+}
+
+enum GroupType {
+  ONLINE
+  OFFLINE
+}
+
+enum GroupStatus {
+  GATHERING
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum LeadStatus {
+  NEW
+  IN_PROGRESS
+  ENROLLED
+  NOT_COME
+  REJECTED
+}
+
+enum PaymentType {
+  ADVANCE
+  MONTHLY
+}
+
+enum PaymentMethod {
+  CASH
+  PAYME
+  CLICK
+  BANK_TRANSFER
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  DEMO
+  SUSPENDED
+}
+
+model Center {
+  id        String   @id @default(cuid())
+  name      String
+  address   String?
+  phone     String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users        User[]
+  courses      Course[]
+  groups       Group[]
+  leads        Lead[]
+  students     Student[]
+  payments     Payment[]
+  subscription Subscription?
+  teachers     Teacher[]
+
+  @@map("centers")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  phone     String   @unique
+  password  String
+  name      String
+  role      Role
+  isActive  Boolean  @default(true)
+  centerId  String?
+  center    Center?  @relation(fields: [centerId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  leads         Lead[]
+  students      Student[]
+  payments      Payment[]
+  salarySetting SalarySetting?
+
+  @@map("users")
+}
+
+model Plan {
+  id            String   @id @default(cuid())
+  name          String
+  price         Decimal  @db.Decimal(12, 2)
+  operatorLimit Int
+  durationDays  Int
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  subscriptions Subscription[]
+
+  @@map("plans")
+}
+
+model Subscription {
+  id        String             @id @default(cuid())
+  centerId  String             @unique
+  center    Center             @relation(fields: [centerId], references: [id])
+  planId    String
+  plan      Plan               @relation(fields: [planId], references: [id])
+  status    SubscriptionStatus @default(ACTIVE)
+  startDate DateTime
+  endDate   DateTime
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  @@map("subscriptions")
+}
+
+model Course {
+  id           String   @id @default(cuid())
+  centerId     String
+  center       Center   @relation(fields: [centerId], references: [id])
+  name         String
+  description  String?
+  durationUnit String
+  duration     Int
+  price        Decimal  @db.Decimal(12, 2)
+  maxStudents  Int
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  groups Group[]
+
+  @@map("courses")
+}
+
+model Group {
+  id          String      @id @default(cuid())
+  centerId    String
+  center      Center      @relation(fields: [centerId], references: [id])
+  courseId    String
+  course      Course      @relation(fields: [courseId], references: [id])
+  name        String
+  type        GroupType
+  status      GroupStatus @default(GATHERING)
+  maxStudents Int
+  price       Decimal?    @db.Decimal(12, 2)
+  meetLink    String?
+  platform    String?
+  room        String?
+  address     String?
+  days        String[]
+  startTime   String
+  endTime     String
+  startDate   DateTime?
+  endDate     DateTime?
+  duration    Int?
+  durationUnit String?
+  teacherId   String?
+  teacher     Teacher?    @relation(fields: [teacherId], references: [id])
+  isArchived  Boolean     @default(false)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  enrollments Enrollment[]
+
+  @@map("groups")
+}
+
+model Lead {
+  id         String     @id @default(cuid())
+  centerId   String
+  center     Center     @relation(fields: [centerId], references: [id])
+  operatorId String?
+  operator   User?      @relation(fields: [operatorId], references: [id], onDelete: SetNull)
+  name       String
+  phone      String
+  interest   String?
+  source     String?
+  status     LeadStatus @default(NEW)
+  notes      String?
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@map("leads")
+}
+
+model Student {
+  id         String   @id @default(cuid())
+  centerId   String
+  center     Center   @relation(fields: [centerId], references: [id])
+  operatorId String?
+  operator   User?    @relation(fields: [operatorId], references: [id], onDelete: SetNull)
+  name       String
+  phone      String
+  email      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  enrollments Enrollment[]
+  payments    Payment[]
+
+  @@map("students")
+}
+
+model Enrollment {
+  id         String   @id @default(cuid())
+  studentId  String
+  student    Student  @relation(fields: [studentId], references: [id])
+  groupId    String
+  group      Group    @relation(fields: [groupId], references: [id])
+  enrolledAt DateTime @default(now())
+  isActive   Boolean  @default(true)
+
+  @@unique([studentId, groupId])
+  @@map("enrollments")
+}
+
+model Payment {
+  id         String        @id @default(cuid())
+  centerId   String
+  center     Center        @relation(fields: [centerId], references: [id])
+  studentId  String
+  student    Student       @relation(fields: [studentId], references: [id])
+  operatorId String?
+  operator   User?         @relation(fields: [operatorId], references: [id], onDelete: SetNull)
+  amount     Decimal       @db.Decimal(12, 2)
+  type       PaymentType
+  method     PaymentMethod
+  isRefunded Boolean       @default(false)
+  refundedAt DateTime?
+  notes      String?
+  paidAt     DateTime      @default(now())
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  @@map("payments")
+}
+
+model Teacher {
+  id        String   @id @default(cuid())
+  centerId  String
+  center    Center   @relation(fields: [centerId], references: [id])
+  name      String
+  phone     String
+  specialty String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  groups Group[]
+
+  @@map("teachers")
+}
+
+model SalarySetting {
+  id          String   @id @default(cuid())
+  operatorId  String   @unique
+  operator    User     @relation(fields: [operatorId], references: [id])
+  percentage  Decimal  @default(10) @db.Decimal(5, 2)
+  fixedAmount Decimal  @default(0) @db.Decimal(12, 2)
+  updatedAt   DateTime @updatedAt
+
+  @@map("salary_settings")
+}
