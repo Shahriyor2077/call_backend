@@ -47,6 +47,9 @@ let GroupsController = class GroupsController {
     enrollDirect(groupId, studentId, user) {
         return this.groupsService.enroll(groupId, studentId, user.centerId);
     }
+    unenroll(groupId, studentId, user) {
+        return this.groupsService.unenroll(groupId, studentId, user.centerId);
+    }
     transfer(studentId, fromGroupId, toGroupId, user) {
         return this.groupsService.transfer(studentId, fromGroupId, toGroupId, user.centerId);
     }
@@ -117,6 +120,16 @@ __decorate([
     __metadata("design:paramtypes", [String, String, Object]),
     __metadata("design:returntype", void 0)
 ], GroupsController.prototype, "enrollDirect", null);
+__decorate([
+    (0, common_1.Delete)(':id/enroll/:studentId'),
+    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN, client_1.Role.OPERATOR),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Param)('studentId')),
+    __param(2, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Object]),
+    __metadata("design:returntype", void 0)
+], GroupsController.prototype, "unenroll", null);
 __decorate([
     (0, common_1.Post)('transfer'),
     (0, roles_decorator_1.Roles)(client_1.Role.ADMIN, client_1.Role.OPERATOR),

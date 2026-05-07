@@ -193,16 +193,21 @@ model Lead {
 }
 
 model Student {
-  id         String   @id @default(cuid())
-  centerId   String
-  center     Center   @relation(fields: [centerId], references: [id])
-  operatorId String?
-  operator   User?    @relation(fields: [operatorId], references: [id], onDelete: SetNull)
-  name       String
-  phone      String
-  email      String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id          String    @id @default(cuid())
+  centerId    String
+  center      Center    @relation(fields: [centerId], references: [id])
+  operatorId  String?
+  operator    User?     @relation(fields: [operatorId], references: [id], onDelete: SetNull)
+  name        String
+  surname     String?
+  phone       String
+  parentPhone String?
+  email       String?
+  gender      String?
+  birthDate   DateTime?
+  notes       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   enrollments Enrollment[]
   payments    Payment[]

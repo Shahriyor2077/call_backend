@@ -13,8 +13,13 @@ exports.CreateStudentDto = void 0;
 const class_validator_1 = require("class-validator");
 class CreateStudentDto {
     name;
+    surname;
     phone;
+    parentPhone;
     email;
+    gender;
+    birthDate;
+    notes;
     groupId;
 }
 exports.CreateStudentDto = CreateStudentDto;
@@ -24,14 +29,39 @@ __decorate([
     __metadata("design:type", String)
 ], CreateStudentDto.prototype, "name", void 0);
 __decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateStudentDto.prototype, "surname", void 0);
+__decorate([
     (0, class_validator_1.Matches)(/^\+998[0-9]{9}$/, { message: 'Telefon +998XXXXXXXXX formatida bo\'lishi kerak' }),
     __metadata("design:type", String)
 ], CreateStudentDto.prototype, "phone", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateStudentDto.prototype, "parentPhone", void 0);
 __decorate([
     (0, class_validator_1.IsEmail)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateStudentDto.prototype, "email", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateStudentDto.prototype, "gender", void 0);
+__decorate([
+    (0, class_validator_1.IsDateString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateStudentDto.prototype, "birthDate", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateStudentDto.prototype, "notes", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),

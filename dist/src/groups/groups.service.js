@@ -114,6 +114,15 @@ let GroupsService = class GroupsService {
         });
         return this.enroll(toGroupId, studentId, centerId);
     }
+    async unenroll(groupId, studentId, centerId) {
+        const group = await this.prisma.group.findFirst({ where: { id: groupId, centerId } });
+        if (!group)
+            throw new common_1.NotFoundException('Guruh topilmadi');
+        return this.prisma.enrollment.updateMany({
+            where: { studentId, groupId, isActive: true },
+            data: { isActive: false },
+        });
+    }
     async enroll(groupId, studentId, centerId) {
         const group = await this.prisma.group.findFirst({
             where: { id: groupId, centerId },

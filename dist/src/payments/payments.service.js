@@ -50,12 +50,21 @@ let PaymentsService = class PaymentsService {
             where.type = query.type;
         if (query?.method)
             where.method = query.method;
+        if (query?.groupId) {
+            where.student = { enrollments: { some: { groupId: query.groupId, isActive: true } } };
+        }
+        else if (query?.teacherId) {
+            where.student = { enrollments: { some: { group: { teacherId: query.teacherId }, isActive: true } } };
+        }
         if (query?.from || query?.to) {
             where.paidAt = {};
             if (query.from)
                 where.paidAt.gte = new Date(query.from);
-            if (query.to)
-                where.paidAt.lte = new Date(query.to);
+            if (query.to) {
+                const to = new Date(query.to);
+                to.setHours(23, 59, 59, 999);
+                where.paidAt.lte = to;
+            }
         }
         const page = query?.page || 1;
         const limit = query?.limit || 50;
@@ -81,19 +90,18 @@ let PaymentsService = class PaymentsService {
                                 select: {
                                     id: true,
                                     isActive: true,
+                                    enrolledAt: true,
                                     group: {
                                         select: {
                                             id: true,
                                             name: true,
-                                            course: {
-                                                select: {
-                                                    id: true,
-                                                    name: true,
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
+                                            startDate: true,
+                                            endDate: true,
+                                            course: { select: { id: true, name: true } },
+                                            teacher: { select: { id: true, name: true } },
+                                        },
+                                    },
+                                },
                             }
                         }
                     },

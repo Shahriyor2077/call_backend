@@ -62,6 +62,16 @@ export class GroupsController {
     return this.groupsService.enroll(groupId, studentId, user.centerId);
   }
 
+  @Delete(':id/enroll/:studentId')
+  @Roles(Role.ADMIN, Role.OPERATOR)
+  unenroll(
+    @Param('id') groupId: string,
+    @Param('studentId') studentId: string,
+    @CurrentUser() user: any,
+  ) {
+    return this.groupsService.unenroll(groupId, studentId, user.centerId);
+  }
+
   @Post('transfer')
   @Roles(Role.ADMIN, Role.OPERATOR)
   transfer(

@@ -18,6 +18,12 @@ export class StudentsController {
     return this.studentsService.findAll(user);
   }
 
+  @Get('debtors')
+  @Roles(Role.ADMIN, Role.OPERATOR)
+  getDebtors(@CurrentUser() user: any) {
+    return this.studentsService.getDebtors(user);
+  }
+
   @Get(':id')
   @Roles(Role.ADMIN, Role.OPERATOR)
   findOne(@Param('id') id: string, @CurrentUser() user: any) {

@@ -4,21 +4,6 @@ export declare class StudentsController {
     private studentsService;
     constructor(studentsService: StudentsService);
     findAll(user: any): import("@prisma/client").Prisma.PrismaPromise<({
-        payments: {
-            id: string;
-            centerId: string;
-            createdAt: Date;
-            updatedAt: Date;
-            operatorId: string;
-            type: import("@prisma/client").$Enums.PaymentType;
-            studentId: string;
-            notes: string | null;
-            paidAt: Date;
-            amount: import("@prisma/client-runtime-utils").Decimal;
-            method: import("@prisma/client").$Enums.PaymentMethod;
-            isRefunded: boolean;
-            refundedAt: Date | null;
-        }[];
         operator: {
             id: string;
             name: string;
@@ -27,41 +12,41 @@ export declare class StudentsController {
             group: {
                 course: {
                     id: string;
-                    name: string;
-                    isActive: boolean;
                     centerId: string;
+                    name: string;
                     createdAt: Date;
                     updatedAt: Date;
-                    price: import("@prisma/client-runtime-utils").Decimal;
-                    description: string | null;
-                    durationUnit: string;
-                    duration: number;
+                    isActive: boolean;
                     maxStudents: number;
+                    price: import("@prisma/client-runtime-utils").Decimal;
+                    duration: number;
+                    durationUnit: string;
+                    description: string | null;
                 };
             } & {
                 id: string;
-                name: string;
                 centerId: string;
+                name: string;
                 createdAt: Date;
                 updatedAt: Date;
-                price: import("@prisma/client-runtime-utils").Decimal | null;
-                address: string | null;
-                status: import("@prisma/client").$Enums.GroupStatus;
-                startDate: Date | null;
-                endDate: Date | null;
-                days: string[];
-                durationUnit: string | null;
-                duration: number | null;
-                maxStudents: number;
-                isArchived: boolean;
                 courseId: string;
                 type: import("@prisma/client").$Enums.GroupType;
+                status: import("@prisma/client").$Enums.GroupStatus;
+                maxStudents: number;
+                price: import("@prisma/client-runtime-utils").Decimal | null;
                 meetLink: string | null;
                 platform: string | null;
                 room: string | null;
+                address: string | null;
+                days: string[];
                 startTime: string;
                 endTime: string;
+                startDate: Date | null;
+                endDate: Date | null;
+                duration: number | null;
+                durationUnit: string | null;
                 teacherId: string | null;
+                isArchived: boolean;
             };
         } & {
             id: string;
@@ -70,32 +55,33 @@ export declare class StudentsController {
             groupId: string;
             enrolledAt: Date;
         })[];
+        payments: {
+            id: string;
+            centerId: string;
+            operatorId: string;
+            createdAt: Date;
+            updatedAt: Date;
+            paidAt: Date;
+            studentId: string;
+            type: import("@prisma/client").$Enums.PaymentType;
+            amount: import("@prisma/client-runtime-utils").Decimal;
+            method: import("@prisma/client").$Enums.PaymentMethod;
+            isRefunded: boolean;
+            refundedAt: Date | null;
+            notes: string | null;
+        }[];
     } & {
         id: string;
-        phone: string;
-        name: string;
         centerId: string;
+        operatorId: string;
+        name: string;
+        phone: string;
+        email: string | null;
         createdAt: Date;
         updatedAt: Date;
-        operatorId: string;
-        email: string | null;
     })[]>;
+    getDebtors(user: any): Promise<any[]>;
     findOne(id: string, user: any): Promise<{
-        payments: {
-            id: string;
-            centerId: string;
-            createdAt: Date;
-            updatedAt: Date;
-            operatorId: string;
-            type: import("@prisma/client").$Enums.PaymentType;
-            studentId: string;
-            notes: string | null;
-            paidAt: Date;
-            amount: import("@prisma/client-runtime-utils").Decimal;
-            method: import("@prisma/client").$Enums.PaymentMethod;
-            isRefunded: boolean;
-            refundedAt: Date | null;
-        }[];
         operator: {
             id: string;
             name: string;
@@ -104,41 +90,41 @@ export declare class StudentsController {
             group: {
                 course: {
                     id: string;
-                    name: string;
-                    isActive: boolean;
                     centerId: string;
+                    name: string;
                     createdAt: Date;
                     updatedAt: Date;
-                    price: import("@prisma/client-runtime-utils").Decimal;
-                    description: string | null;
-                    durationUnit: string;
-                    duration: number;
+                    isActive: boolean;
                     maxStudents: number;
+                    price: import("@prisma/client-runtime-utils").Decimal;
+                    duration: number;
+                    durationUnit: string;
+                    description: string | null;
                 };
             } & {
                 id: string;
-                name: string;
                 centerId: string;
+                name: string;
                 createdAt: Date;
                 updatedAt: Date;
-                price: import("@prisma/client-runtime-utils").Decimal | null;
-                address: string | null;
-                status: import("@prisma/client").$Enums.GroupStatus;
-                startDate: Date | null;
-                endDate: Date | null;
-                days: string[];
-                durationUnit: string | null;
-                duration: number | null;
-                maxStudents: number;
-                isArchived: boolean;
                 courseId: string;
                 type: import("@prisma/client").$Enums.GroupType;
+                status: import("@prisma/client").$Enums.GroupStatus;
+                maxStudents: number;
+                price: import("@prisma/client-runtime-utils").Decimal | null;
                 meetLink: string | null;
                 platform: string | null;
                 room: string | null;
+                address: string | null;
+                days: string[];
                 startTime: string;
                 endTime: string;
+                startDate: Date | null;
+                endDate: Date | null;
+                duration: number | null;
+                durationUnit: string | null;
                 teacherId: string | null;
+                isArchived: boolean;
             };
         } & {
             id: string;
@@ -147,35 +133,50 @@ export declare class StudentsController {
             groupId: string;
             enrolledAt: Date;
         })[];
+        payments: {
+            id: string;
+            centerId: string;
+            operatorId: string;
+            createdAt: Date;
+            updatedAt: Date;
+            paidAt: Date;
+            studentId: string;
+            type: import("@prisma/client").$Enums.PaymentType;
+            amount: import("@prisma/client-runtime-utils").Decimal;
+            method: import("@prisma/client").$Enums.PaymentMethod;
+            isRefunded: boolean;
+            refundedAt: Date | null;
+            notes: string | null;
+        }[];
     } & {
         id: string;
-        phone: string;
-        name: string;
         centerId: string;
+        operatorId: string;
+        name: string;
+        phone: string;
+        email: string | null;
         createdAt: Date;
         updatedAt: Date;
-        operatorId: string;
-        email: string | null;
     }>;
     create(dto: CreateStudentDto, user: any): Promise<{
         id: string;
-        phone: string;
-        name: string;
         centerId: string;
+        operatorId: string;
+        name: string;
+        phone: string;
+        email: string | null;
         createdAt: Date;
         updatedAt: Date;
-        operatorId: string;
-        email: string | null;
     }>;
     update(id: string, dto: any, user: any): Promise<{
         id: string;
-        phone: string;
-        name: string;
         centerId: string;
+        operatorId: string;
+        name: string;
+        phone: string;
+        email: string | null;
         createdAt: Date;
         updatedAt: Date;
-        operatorId: string;
-        email: string | null;
     }>;
     enroll(studentId: string, groupId: string, user: any): Promise<{
         id: string;
@@ -186,12 +187,12 @@ export declare class StudentsController {
     }>;
     remove(id: string, user: any): Promise<{
         id: string;
-        phone: string;
-        name: string;
         centerId: string;
+        operatorId: string;
+        name: string;
+        phone: string;
+        email: string | null;
         createdAt: Date;
         updatedAt: Date;
-        operatorId: string;
-        email: string | null;
     }>;
 }

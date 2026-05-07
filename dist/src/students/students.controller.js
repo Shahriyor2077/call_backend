@@ -29,6 +29,9 @@ let StudentsController = class StudentsController {
     findAll(user) {
         return this.studentsService.findAll(user);
     }
+    getDebtors(user) {
+        return this.studentsService.getDebtors(user);
+    }
     findOne(id, user) {
         return this.studentsService.findOne(id, user);
     }
@@ -55,6 +58,14 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], StudentsController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('debtors'),
+    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN, client_1.Role.OPERATOR),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], StudentsController.prototype, "getDebtors", null);
 __decorate([
     (0, common_1.Get)(':id'),
     (0, roles_decorator_1.Roles)(client_1.Role.ADMIN, client_1.Role.OPERATOR),
