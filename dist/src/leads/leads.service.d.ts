@@ -12,7 +12,7 @@ export declare class LeadsService {
             operator: {
                 id: string;
                 name: string;
-            };
+            } | null;
         } & {
             id: string;
             phone: string;
@@ -21,7 +21,7 @@ export declare class LeadsService {
             createdAt: Date;
             updatedAt: Date;
             status: import("@prisma/client").$Enums.LeadStatus;
-            operatorId: string;
+            operatorId: string | null;
             interest: string | null;
             source: string | null;
             notes: string | null;
@@ -48,7 +48,7 @@ export declare class LeadsService {
         createdAt: Date;
         updatedAt: Date;
         status: import("@prisma/client").$Enums.LeadStatus;
-        operatorId: string;
+        operatorId: string | null;
         interest: string | null;
         source: string | null;
         notes: string | null;
@@ -61,7 +61,7 @@ export declare class LeadsService {
         createdAt: Date;
         updatedAt: Date;
         status: import("@prisma/client").$Enums.LeadStatus;
-        operatorId: string;
+        operatorId: string | null;
         interest: string | null;
         source: string | null;
         notes: string | null;
@@ -74,7 +74,7 @@ export declare class LeadsService {
         createdAt: Date;
         updatedAt: Date;
         status: import("@prisma/client").$Enums.LeadStatus;
-        operatorId: string;
+        operatorId: string | null;
         interest: string | null;
         source: string | null;
         notes: string | null;
@@ -87,7 +87,7 @@ export declare class LeadsService {
         createdAt: Date;
         updatedAt: Date;
         status: import("@prisma/client").$Enums.LeadStatus;
-        operatorId: string;
+        operatorId: string | null;
         interest: string | null;
         source: string | null;
         notes: string | null;
@@ -100,7 +100,7 @@ export declare class LeadsService {
         createdAt: Date;
         updatedAt: Date;
         status: import("@prisma/client").$Enums.LeadStatus;
-        operatorId: string;
+        operatorId: string | null;
         interest: string | null;
         source: string | null;
         notes: string | null;

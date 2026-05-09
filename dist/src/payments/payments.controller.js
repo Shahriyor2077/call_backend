@@ -53,6 +53,9 @@ let PaymentsController = class PaymentsController {
         };
         return this.paymentsService.findAll(user, parsedQuery);
     }
+    findOne(id, user) {
+        return this.paymentsService.findOne(id, user.centerId);
+    }
     create(dto, user) {
         return this.paymentsService.create(dto, user);
     }
@@ -84,6 +87,15 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], PaymentsController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)(':id'),
+    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN, client_1.Role.OPERATOR),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], PaymentsController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Post)(),
     (0, roles_decorator_1.Roles)(client_1.Role.ADMIN, client_1.Role.OPERATOR),

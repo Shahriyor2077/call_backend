@@ -101,9 +101,12 @@ let StudentsService = class StudentsService {
     }
     async create(dto, user) {
         const { groupId, ...studentData } = dto;
-        const student = await this.prisma.student.create({
-            data: { ...studentData, centerId: user.centerId, operatorId: user.id },
-        });
+        const data = { ...studentData, centerId: user.centerId, operatorId: user.id };
+        if (data.birthDate)
+            data.birthDate = new Date(data.birthDate);
+        else
+            delete data.birthDate;
+        const student = await this.prisma.student.create({ data });
         if (groupId) {
             await this.groupsService.enroll(groupId, student.id, user.centerId);
         }
@@ -111,7 +114,12 @@ let StudentsService = class StudentsService {
     }
     async update(id, dto, user) {
         await this.findOne(id, user);
-        return this.prisma.student.update({ where: { id }, data: dto });
+        const data = { ...dto };
+        if (data.birthDate)
+            data.birthDate = new Date(data.birthDate);
+        else
+            delete data.birthDate;
+        return this.prisma.student.update({ where: { id }, data });
     }
     async enrollStudent(studentId, groupId, user) {
         return this.groupsService.enroll(groupId, studentId, user.centerId);

@@ -24,6 +24,7 @@ export class GroupsService {
       where: { id, centerId, isArchived: false },
       include: {
         course: true,
+        teacher: { select: { id: true, name: true, specialty: true } },
         enrollments: {
           where: { isActive: true },
           include: {

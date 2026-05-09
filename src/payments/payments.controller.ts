@@ -47,6 +47,12 @@ export class PaymentsController {
     return this.paymentsService.findAll(user, parsedQuery);
   }
 
+  @Get(':id')
+  @Roles(Role.ADMIN, Role.OPERATOR)
+  findOne(@Param('id') id: string, @CurrentUser() user: any) {
+    return this.paymentsService.findOne(id, user.centerId);
+  }
+
   @Post()
   @Roles(Role.ADMIN, Role.OPERATOR)
   create(@Body() dto: CreatePaymentDto, @CurrentUser() user: any) {

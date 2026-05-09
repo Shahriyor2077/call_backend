@@ -127,6 +127,19 @@ export class PaymentsService {
     };
   }
 
+  async findOne(id: string, centerId: string) {
+    const payment = await this.prisma.payment.findFirst({
+      where: { id, centerId },
+      include: {
+        student: { select: { id: true, name: true, phone: true } },
+        operator: { select: { id: true, name: true } },
+        center: { select: { id: true, name: true, address: true, phone: true } },
+      },
+    });
+    if (!payment) throw new NotFoundException('To\'lov topilmadi');
+    return payment;
+  }
+
   async create(dto: CreatePaymentDto, user: any) {
     const student = await this.prisma.student.findFirst({
       where: { id: dto.studentId, centerId: user.centerId },

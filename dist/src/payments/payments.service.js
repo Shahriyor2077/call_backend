@@ -128,6 +128,19 @@ let PaymentsService = class PaymentsService {
             },
         };
     }
+    async findOne(id, centerId) {
+        const payment = await this.prisma.payment.findFirst({
+            where: { id, centerId },
+            include: {
+                student: { select: { id: true, name: true, phone: true } },
+                operator: { select: { id: true, name: true } },
+                center: { select: { id: true, name: true, address: true, phone: true } },
+            },
+        });
+        if (!payment)
+            throw new common_1.NotFoundException('To\'lov topilmadi');
+        return payment;
+    }
     async create(dto, user) {
         const student = await this.prisma.student.findFirst({
             where: { id: dto.studentId, centerId: user.centerId },

@@ -17,15 +17,15 @@ export declare class SalaryController {
             centerId: string;
             createdAt: Date;
             updatedAt: Date;
-            operatorId: string;
+            operatorId: string | null;
             type: import("@prisma/client").$Enums.PaymentType;
             studentId: string;
             notes: string | null;
-            paidAt: Date;
+            isRefunded: boolean;
             amount: import("@prisma/client-runtime-utils").Decimal;
             method: import("@prisma/client").$Enums.PaymentMethod;
-            isRefunded: boolean;
             refundedAt: Date | null;
+            paidAt: Date;
         })[];
     }>;
     getReport(user: any, month?: string): Promise<{
