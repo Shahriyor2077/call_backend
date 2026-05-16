@@ -18,8 +18,12 @@ async function bootstrap() {
   app.setGlobalPrefix('api/v1');
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
-  const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:3000').split(',');
-  app.enableCors({ origin: allowedOrigins });
+  app.enableCors({
+    origin: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  });
 
   const port = process.env.PORT || 3001;
   await app.listen(port);
