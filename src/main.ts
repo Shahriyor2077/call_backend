@@ -19,7 +19,11 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
   app.enableCors({
-    origin: true,
+    origin: [
+      'https://call-frontend-xi.vercel.app',
+      'http://localhost:3000',
+      /\.vercel\.app$/,
+    ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
