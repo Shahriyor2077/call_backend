@@ -31,6 +31,15 @@ let SalaryController = class SalaryController {
     getReport(user, month) {
         return this.salaryService.getReport(user, month);
     }
+    paySalary(user, operatorId, body) {
+        return this.salaryService.paySalary(user, operatorId, body);
+    }
+    getAllPaymentHistory(month) {
+        return this.salaryService.getAllPaymentHistory(month);
+    }
+    getPaymentHistory(operatorId) {
+        return this.salaryService.getPaymentHistory(operatorId);
+    }
 };
 exports.SalaryController = SalaryController;
 __decorate([
@@ -50,6 +59,32 @@ __decorate([
     __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", void 0)
 ], SalaryController.prototype, "getReport", null);
+__decorate([
+    (0, common_1.Post)('pay/:operatorId'),
+    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.Param)('operatorId')),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, Object]),
+    __metadata("design:returntype", void 0)
+], SalaryController.prototype, "paySalary", null);
+__decorate([
+    (0, common_1.Get)('history/all'),
+    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    __param(0, (0, common_1.Query)('month')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], SalaryController.prototype, "getAllPaymentHistory", null);
+__decorate([
+    (0, common_1.Get)('history/:operatorId'),
+    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN, client_1.Role.OPERATOR),
+    __param(0, (0, common_1.Param)('operatorId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], SalaryController.prototype, "getPaymentHistory", null);
 exports.SalaryController = SalaryController = __decorate([
     (0, common_1.Controller)('salary'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),

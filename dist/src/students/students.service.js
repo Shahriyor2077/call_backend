@@ -26,6 +26,7 @@ let StudentsService = class StudentsService {
         const students = await this.prisma.student.findMany({
             where: {
                 centerId: user.centerId,
+                isDeleted: false,
                 enrollments: { some: { isActive: true } },
             },
             include: {
@@ -57,7 +58,7 @@ let StudentsService = class StudentsService {
                 totalExpected += expected;
                 enrollmentDetails.push({ group, monthlyPrice, months, expected, enrolledAt: enrollment.enrolledAt });
             }
-            const totalPaid = student.payments.reduce((s, p) => s + Number(p.amount), 0);
+            const totalPaid = student.payments.reduce((s, p) => s + Number(p.amount) + Number(p.discountAmount || 0), 0);
             const debt = totalExpected - totalPaid;
             if (debt > 0) {
                 debtors.push({ ...student, totalExpected, totalPaid, debt, enrollmentDetails });
@@ -66,7 +67,7 @@ let StudentsService = class StudentsService {
         return debtors.sort((a, b) => b.debt - a.debt);
     }
     findAll(user) {
-        const where = { centerId: user.centerId };
+        const where = { centerId: user.centerId, isDeleted: false };
         if (user.role === client_1.Role.OPERATOR)
             where.operatorId = user.id;
         return this.prisma.student.findMany({
@@ -82,7 +83,7 @@ let StudentsService = class StudentsService {
         });
     }
     async findOne(id, user) {
-        const where = { id, centerId: user.centerId };
+        const where = { id, centerId: user.centerId, isDeleted: false };
         if (user.role === client_1.Role.OPERATOR)
             where.operatorId = user.id;
         const student = await this.prisma.student.findFirst({
@@ -126,7 +127,10 @@ let StudentsService = class StudentsService {
     }
     async remove(id, user) {
         const student = await this.findOne(id, user);
-        return this.prisma.student.delete({ where: { id: student.id } });
+        return this.prisma.$transaction(async (tx) => {
+            await tx.enrollment.deleteMany({ where: { studentId: student.id } });
+            return tx.student.update({ where: { id: student.id }, data: { isDeleted: true } });
+        });
     }
 };
 exports.StudentsService = StudentsService;

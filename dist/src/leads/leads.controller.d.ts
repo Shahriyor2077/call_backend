@@ -1,9 +1,10 @@
 import { LeadsService } from './leads.service';
 import { CreateLeadDto, UpdateLeadStatusDto } from './dto/create-lead.dto';
+import type { AuthUser } from '../common/types';
 export declare class LeadsController {
     private leadsService;
     constructor(leadsService: LeadsService);
-    findAll(user: any, page?: string, limit?: string, status?: string): Promise<{
+    findAll(user: AuthUser, page?: string, limit?: string, status?: string): Promise<{
         data: ({
             operator: {
                 id: string;
@@ -18,9 +19,9 @@ export declare class LeadsController {
             updatedAt: Date;
             status: import("@prisma/client").$Enums.LeadStatus;
             operatorId: string | null;
+            notes: string | null;
             interest: string | null;
             source: string | null;
-            notes: string | null;
         })[];
         meta: {
             total: number;
@@ -36,7 +37,7 @@ export declare class LeadsController {
             };
         };
     }>;
-    findOne(id: string, user: any): Promise<{
+    findOne(id: string, user: AuthUser): Promise<{
         id: string;
         phone: string;
         name: string;
@@ -45,11 +46,11 @@ export declare class LeadsController {
         updatedAt: Date;
         status: import("@prisma/client").$Enums.LeadStatus;
         operatorId: string | null;
+        notes: string | null;
         interest: string | null;
         source: string | null;
-        notes: string | null;
     }>;
-    create(dto: CreateLeadDto, user: any): Promise<{
+    create(dto: CreateLeadDto, user: AuthUser): Promise<{
         id: string;
         phone: string;
         name: string;
@@ -58,11 +59,11 @@ export declare class LeadsController {
         updatedAt: Date;
         status: import("@prisma/client").$Enums.LeadStatus;
         operatorId: string | null;
+        notes: string | null;
         interest: string | null;
         source: string | null;
-        notes: string | null;
     }>;
-    update(id: string, dto: any, user: any): Promise<{
+    update(id: string, dto: any, user: AuthUser): Promise<{
         id: string;
         phone: string;
         name: string;
@@ -71,11 +72,11 @@ export declare class LeadsController {
         updatedAt: Date;
         status: import("@prisma/client").$Enums.LeadStatus;
         operatorId: string | null;
+        notes: string | null;
         interest: string | null;
         source: string | null;
-        notes: string | null;
     }>;
-    updateStatus(id: string, dto: UpdateLeadStatusDto, user: any): Promise<{
+    updateStatus(id: string, dto: UpdateLeadStatusDto, user: AuthUser): Promise<{
         id: string;
         phone: string;
         name: string;
@@ -84,11 +85,11 @@ export declare class LeadsController {
         updatedAt: Date;
         status: import("@prisma/client").$Enums.LeadStatus;
         operatorId: string | null;
+        notes: string | null;
         interest: string | null;
         source: string | null;
-        notes: string | null;
     }>;
-    remove(id: string, user: any): Promise<{
+    remove(id: string, user: AuthUser): Promise<{
         id: string;
         phone: string;
         name: string;
@@ -97,8 +98,8 @@ export declare class LeadsController {
         updatedAt: Date;
         status: import("@prisma/client").$Enums.LeadStatus;
         operatorId: string | null;
+        notes: string | null;
         interest: string | null;
         source: string | null;
-        notes: string | null;
     }>;
 }

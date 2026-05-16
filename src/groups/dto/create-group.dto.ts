@@ -1,6 +1,6 @@
 import {
-  IsString, IsNotEmpty, IsEnum, IsInt, IsPositive,
-  IsOptional, IsNumber, IsArray,
+  IsString, IsNotEmpty, IsEnum, IsInt,
+  IsOptional, IsNumber, IsArray, Matches,
 } from 'class-validator';
 import { GroupType } from '@prisma/client';
 
@@ -17,8 +17,8 @@ export class CreateGroupDto {
   type: GroupType;
 
   @IsInt()
-  @IsPositive()
-  maxStudents: number;
+  @IsOptional()
+  maxStudents?: number;
 
   @IsNumber()
   @IsOptional()
@@ -44,13 +44,13 @@ export class CreateGroupDto {
   @IsString({ each: true })
   days: string[];
 
-  @IsString()
-  @IsNotEmpty()
-  startTime: string;
+  @IsOptional()
+  @Matches(/^\d{2}:\d{2}$/, { message: 'startTime HH:mm formatida bo\'lishi kerak' })
+  startTime?: string;
 
-  @IsString()
-  @IsNotEmpty()
-  endTime: string;
+  @IsOptional()
+  @Matches(/^\d{2}:\d{2}$/, { message: 'endTime HH:mm formatida bo\'lishi kerak' })
+  endTime?: string;
 
   @IsString()
   @IsOptional()

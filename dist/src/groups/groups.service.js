@@ -55,6 +55,13 @@ let GroupsService = class GroupsService {
         });
         if (!course)
             throw new common_1.NotFoundException('Kurs topilmadi');
+        if (dto.teacherId) {
+            const teacher = await this.prisma.teacher.findFirst({
+                where: { id: dto.teacherId, centerId: user.centerId },
+            });
+            if (!teacher)
+                throw new common_1.NotFoundException('O\'qituvchi topilmadi');
+        }
         const data = {
             ...dto,
             centerId: user.centerId,
@@ -82,7 +89,7 @@ let GroupsService = class GroupsService {
                 throw new common_1.BadRequestException(`Ma'lumotlar bazasi xatosi: ${e.code}`);
             }
             if (e instanceof client_1.Prisma.PrismaClientValidationError) {
-                throw new common_1.BadRequestException('Yuborilgan ma\'lumotlarda xatolik bor');
+                throw new common_1.BadRequestException('Prisma validation: ' + e.message.split('\n').slice(-3).join(' '));
             }
             throw e;
         }
@@ -134,7 +141,7 @@ let GroupsService = class GroupsService {
         if (group.status !== client_1.GroupStatus.ACTIVE && group.status !== client_1.GroupStatus.GATHERING) {
             throw new common_1.BadRequestException('Bu guruhga yozilish mumkin emas');
         }
-        if (group._count.enrollments >= group.maxStudents) {
+        if (group.maxStudents != null && group._count.enrollments >= group.maxStudents) {
             throw new common_1.BadRequestException('Guruh to\'lgan');
         }
         const existing = await this.prisma.enrollment.findUnique({

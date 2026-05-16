@@ -1,9 +1,10 @@
 import { GroupsService } from './groups.service';
 import { CreateGroupDto } from './dto/create-group.dto';
+import type { AuthUser } from '../common/types';
 export declare class GroupsController {
     private groupsService;
     constructor(groupsService: GroupsService);
-    findAll(user: any): import("@prisma/client").Prisma.PrismaPromise<({
+    findAll(user: AuthUser): import("@prisma/client").Prisma.PrismaPromise<({
         _count: {
             enrollments: number;
         };
@@ -39,18 +40,18 @@ export declare class GroupsController {
         days: string[];
         durationUnit: string | null;
         duration: number | null;
-        maxStudents: number;
+        maxStudents: number | null;
         isArchived: boolean;
         courseId: string;
         type: import("@prisma/client").$Enums.GroupType;
         meetLink: string | null;
         platform: string | null;
         room: string | null;
-        startTime: string;
-        endTime: string;
+        startTime: string | null;
+        endTime: string | null;
         teacherId: string | null;
     })[]>;
-    findOne(id: string, user: any): Promise<{
+    findOne(id: string, user: AuthUser): Promise<{
         course: {
             id: string;
             name: string;
@@ -82,13 +83,14 @@ export declare class GroupsController {
                 centerId: string;
                 createdAt: Date;
                 updatedAt: Date;
+                isDeleted: boolean;
                 operatorId: string | null;
-                notes: string | null;
                 surname: string | null;
                 parentPhone: string | null;
                 email: string | null;
                 gender: string | null;
                 birthDate: Date | null;
+                notes: string | null;
             };
         } & {
             id: string;
@@ -111,18 +113,18 @@ export declare class GroupsController {
         days: string[];
         durationUnit: string | null;
         duration: number | null;
-        maxStudents: number;
+        maxStudents: number | null;
         isArchived: boolean;
         courseId: string;
         type: import("@prisma/client").$Enums.GroupType;
         meetLink: string | null;
         platform: string | null;
         room: string | null;
-        startTime: string;
-        endTime: string;
+        startTime: string | null;
+        endTime: string | null;
         teacherId: string | null;
     }>;
-    create(dto: CreateGroupDto, user: any): Promise<{
+    create(dto: CreateGroupDto, user: AuthUser): Promise<{
         id: string;
         name: string;
         centerId: string;
@@ -136,18 +138,18 @@ export declare class GroupsController {
         days: string[];
         durationUnit: string | null;
         duration: number | null;
-        maxStudents: number;
+        maxStudents: number | null;
         isArchived: boolean;
         courseId: string;
         type: import("@prisma/client").$Enums.GroupType;
         meetLink: string | null;
         platform: string | null;
         room: string | null;
-        startTime: string;
-        endTime: string;
+        startTime: string | null;
+        endTime: string | null;
         teacherId: string | null;
     }>;
-    update(id: string, dto: any, user: any): Promise<{
+    update(id: string, dto: any, user: AuthUser): Promise<{
         id: string;
         name: string;
         centerId: string;
@@ -161,18 +163,18 @@ export declare class GroupsController {
         days: string[];
         durationUnit: string | null;
         duration: number | null;
-        maxStudents: number;
+        maxStudents: number | null;
         isArchived: boolean;
         courseId: string;
         type: import("@prisma/client").$Enums.GroupType;
         meetLink: string | null;
         platform: string | null;
         room: string | null;
-        startTime: string;
-        endTime: string;
+        startTime: string | null;
+        endTime: string | null;
         teacherId: string | null;
     }>;
-    archive(id: string, user: any): Promise<{
+    archive(id: string, user: AuthUser): Promise<{
         id: string;
         name: string;
         centerId: string;
@@ -186,33 +188,26 @@ export declare class GroupsController {
         days: string[];
         durationUnit: string | null;
         duration: number | null;
-        maxStudents: number;
+        maxStudents: number | null;
         isArchived: boolean;
         courseId: string;
         type: import("@prisma/client").$Enums.GroupType;
         meetLink: string | null;
         platform: string | null;
         room: string | null;
-        startTime: string;
-        endTime: string;
+        startTime: string | null;
+        endTime: string | null;
         teacherId: string | null;
     }>;
-    enroll(groupId: string, studentId: string, user: any): Promise<{
+    enroll(groupId: string, studentId: string, user: AuthUser): Promise<{
         id: string;
         isActive: boolean;
         studentId: string;
         groupId: string;
         enrolledAt: Date;
     }>;
-    enrollDirect(groupId: string, studentId: string, user: any): Promise<{
-        id: string;
-        isActive: boolean;
-        studentId: string;
-        groupId: string;
-        enrolledAt: Date;
-    }>;
-    unenroll(groupId: string, studentId: string, user: any): Promise<import("@prisma/client").Prisma.BatchPayload>;
-    transfer(studentId: string, fromGroupId: string, toGroupId: string, user: any): Promise<{
+    unenroll(groupId: string, studentId: string, user: AuthUser): Promise<import("@prisma/client").Prisma.BatchPayload>;
+    transfer(studentId: string, fromGroupId: string, toGroupId: string, user: AuthUser): Promise<{
         id: string;
         isActive: boolean;
         studentId: string;

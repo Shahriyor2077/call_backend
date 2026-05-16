@@ -17,7 +17,7 @@ export class UsersService {
   ) { }
 
   async findAll(requestingUser: any, roleFilter?: string) {
-    const where: any = {};
+    const where: any = { isActive: true };
     if (requestingUser.role === Role.ADMIN) {
       where.centerId = requestingUser.centerId;
       where.role = Role.OPERATOR;
@@ -124,8 +124,7 @@ export class UsersService {
       if (user.role !== Role.OPERATOR) throw new ForbiddenException('Admin faqat operatorni o\'chira oladi');
     }
 
-    await this.prisma.salarySetting.deleteMany({ where: { operatorId: id } });
-    await this.prisma.user.delete({ where: { id } });
+    await this.prisma.user.update({ where: { id }, data: { isActive: false } });
     return { id, deleted: true };
   }
 

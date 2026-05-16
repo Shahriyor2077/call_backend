@@ -22,7 +22,7 @@ let UsersService = class UsersService {
         this.authService = authService;
     }
     async findAll(requestingUser, roleFilter) {
-        const where = {};
+        const where = { isActive: true };
         if (requestingUser.role === client_1.Role.ADMIN) {
             where.centerId = requestingUser.centerId;
             where.role = client_1.Role.OPERATOR;
@@ -115,8 +115,7 @@ let UsersService = class UsersService {
             if (user.role !== client_1.Role.OPERATOR)
                 throw new common_1.ForbiddenException('Admin faqat operatorni o\'chira oladi');
         }
-        await this.prisma.salarySetting.deleteMany({ where: { operatorId: id } });
-        await this.prisma.user.delete({ where: { id } });
+        await this.prisma.user.update({ where: { id }, data: { isActive: false } });
         return { id, deleted: true };
     }
     async updateSalaryPercentage(operatorId, percentage, adminCenterId, fixedAmount) {

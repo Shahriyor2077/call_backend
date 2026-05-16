@@ -1,5 +1,6 @@
 import { CentersService } from './centers.service';
 import { CreateCenterDto } from './dto/create-center.dto';
+import type { AuthUser } from '../common/types';
 export declare class CentersController {
     private centersService;
     constructor(centersService: CentersService);
@@ -98,7 +99,7 @@ export declare class CentersController {
         updatedAt: Date;
         address: string | null;
     }>;
-    update(id: string, dto: any, user: any): Promise<{
+    update(id: string, dto: any, user: AuthUser): Promise<{
         id: string;
         phone: string | null;
         name: string;

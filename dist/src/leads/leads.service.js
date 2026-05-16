@@ -25,7 +25,7 @@ let LeadsService = class LeadsService {
         if (query?.status)
             where.status = query.status;
         const page = query?.page || 1;
-        const limit = query?.limit || 50;
+        const limit = Math.min(query?.limit || 50, 200);
         const skip = (page - 1) * limit;
         const baseWhere = { centerId: user.centerId };
         if (user.role === client_1.Role.OPERATOR)
@@ -74,12 +74,20 @@ let LeadsService = class LeadsService {
         return lead;
     }
     async create(dto, user) {
-        const operatorId = user.role === client_1.Role.ADMIN && dto.operatorId ? dto.operatorId : user.id;
+        let operatorId = user.id;
+        if (user.role === client_1.Role.ADMIN && dto.operatorId) {
+            const operator = await this.prisma.user.findFirst({
+                where: { id: dto.operatorId, centerId: user.centerId, role: client_1.Role.OPERATOR },
+            });
+            if (!operator)
+                throw new common_1.NotFoundException('Operator topilmadi');
+            operatorId = dto.operatorId;
+        }
         return this.prisma.lead.create({
             data: {
                 ...dto,
                 centerId: user.centerId,
-                operatorId
+                operatorId,
             },
         });
     }
@@ -92,7 +100,8 @@ let LeadsService = class LeadsService {
     }
     async update(id, dto, user) {
         await this.findOne(id, user);
-        return this.prisma.lead.update({ where: { id }, data: dto });
+        const { centerId: _c, operatorId: _o, ...safeDto } = dto;
+        return this.prisma.lead.update({ where: { id }, data: safeDto });
     }
     async remove(id, user) {
         await this.findOne(id, user);

@@ -1,9 +1,10 @@
 import { CoursesService } from './courses.service';
 import { CreateCourseDto } from './dto/create-course.dto';
+import type { AuthUser } from '../common/types';
 export declare class CoursesController {
     private coursesService;
     constructor(coursesService: CoursesService);
-    findAll(user: any): import("@prisma/client").Prisma.PrismaPromise<({
+    findAll(user: AuthUser): import("@prisma/client").Prisma.PrismaPromise<({
         _count: {
             groups: number;
         };
@@ -29,15 +30,15 @@ export declare class CoursesController {
             days: string[];
             durationUnit: string | null;
             duration: number | null;
-            maxStudents: number;
+            maxStudents: number | null;
             isArchived: boolean;
             courseId: string;
             type: import("@prisma/client").$Enums.GroupType;
             meetLink: string | null;
             platform: string | null;
             room: string | null;
-            startTime: string;
-            endTime: string;
+            startTime: string | null;
+            endTime: string | null;
             teacherId: string | null;
         })[];
     } & {
@@ -53,7 +54,7 @@ export declare class CoursesController {
         duration: number;
         maxStudents: number;
     })[]>;
-    findOne(id: string, user: any): Promise<{
+    findOne(id: string, user: AuthUser): Promise<{
         groups: {
             id: string;
             name: string;
@@ -68,15 +69,15 @@ export declare class CoursesController {
             days: string[];
             durationUnit: string | null;
             duration: number | null;
-            maxStudents: number;
+            maxStudents: number | null;
             isArchived: boolean;
             courseId: string;
             type: import("@prisma/client").$Enums.GroupType;
             meetLink: string | null;
             platform: string | null;
             room: string | null;
-            startTime: string;
-            endTime: string;
+            startTime: string | null;
+            endTime: string | null;
             teacherId: string | null;
         }[];
     } & {
@@ -92,7 +93,7 @@ export declare class CoursesController {
         duration: number;
         maxStudents: number;
     }>;
-    create(dto: CreateCourseDto, user: any): Promise<{
+    create(dto: CreateCourseDto, user: AuthUser): Promise<{
         id: string;
         name: string;
         isActive: boolean;
@@ -105,7 +106,7 @@ export declare class CoursesController {
         duration: number;
         maxStudents: number;
     }>;
-    update(id: string, dto: any, user: any): Promise<{
+    update(id: string, dto: any, user: AuthUser): Promise<{
         id: string;
         name: string;
         isActive: boolean;
@@ -118,7 +119,7 @@ export declare class CoursesController {
         duration: number;
         maxStudents: number;
     }>;
-    remove(id: string, user: any): Promise<{
+    remove(id: string, user: AuthUser): Promise<{
         id: string;
         name: string;
         isActive: boolean;

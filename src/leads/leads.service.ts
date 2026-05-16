@@ -2,18 +2,19 @@ import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/commo
 import { Role } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateLeadDto, UpdateLeadStatusDto } from './dto/create-lead.dto';
+import { AuthUser } from '../common/types';
 
 @Injectable()
 export class LeadsService {
   constructor(private prisma: PrismaService) { }
 
-  async findAll(user: any, query?: { page?: number; limit?: number; status?: string }) {
+  async findAll(user: AuthUser, query?: { page?: number; limit?: number; status?: string }) {
     const where: any = { centerId: user.centerId };
     if (user.role === Role.OPERATOR) where.operatorId = user.id;
     if (query?.status) where.status = query.status;
 
     const page = query?.page || 1;
-    const limit = query?.limit || 50; // Default 50 ta
+    const limit = Math.min(query?.limit || 50, 200);
     const skip = (page - 1) * limit;
 
     // Count by status
@@ -56,7 +57,7 @@ export class LeadsService {
     };
   }
 
-  async findOne(id: string, user: any) {
+  async findOne(id: string, user: AuthUser) {
     const where: any = { id, centerId: user.centerId };
     if (user.role === Role.OPERATOR) where.operatorId = user.id;
     const lead = await this.prisma.lead.findFirst({ where });
@@ -64,20 +65,26 @@ export class LeadsService {
     return lead;
   }
 
-  async create(dto: CreateLeadDto, user: any) {
-    // If admin creates lead, use provided operatorId, otherwise use current user
-    const operatorId = user.role === Role.ADMIN && dto.operatorId ? dto.operatorId : user.id;
+  async create(dto: CreateLeadDto, user: AuthUser) {
+    let operatorId = user.id;
+    if (user.role === Role.ADMIN && dto.operatorId) {
+      const operator = await this.prisma.user.findFirst({
+        where: { id: dto.operatorId, centerId: user.centerId, role: Role.OPERATOR },
+      });
+      if (!operator) throw new NotFoundException('Operator topilmadi');
+      operatorId = dto.operatorId;
+    }
 
     return this.prisma.lead.create({
       data: {
         ...dto,
         centerId: user.centerId,
-        operatorId
+        operatorId,
       },
     });
   }
 
-  async updateStatus(id: string, dto: UpdateLeadStatusDto, user: any) {
+  async updateStatus(id: string, dto: UpdateLeadStatusDto, user: AuthUser) {
     await this.findOne(id, user);
     return this.prisma.lead.update({
       where: { id },
@@ -85,12 +92,14 @@ export class LeadsService {
     });
   }
 
-  async update(id: string, dto: any, user: any) {
+  async update(id: string, dto: any, user: AuthUser) {
     await this.findOne(id, user);
-    return this.prisma.lead.update({ where: { id }, data: dto });
+    // centerId va operatorId ni update qilishga ruxsat yo'q
+    const { centerId: _c, operatorId: _o, ...safeDto } = dto;
+    return this.prisma.lead.update({ where: { id }, data: safeDto });
   }
 
-  async remove(id: string, user: any) {
+  async remove(id: string, user: AuthUser) {
     await this.findOne(id, user);
     return this.prisma.lead.delete({ where: { id } });
   }

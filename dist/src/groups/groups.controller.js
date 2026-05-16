@@ -44,9 +44,6 @@ let GroupsController = class GroupsController {
     enroll(groupId, studentId, user) {
         return this.groupsService.enroll(groupId, studentId, user.centerId);
     }
-    enrollDirect(groupId, studentId, user) {
-        return this.groupsService.enroll(groupId, studentId, user.centerId);
-    }
     unenroll(groupId, studentId, user) {
         return this.groupsService.unenroll(groupId, studentId, user.centerId);
     }
@@ -110,16 +107,6 @@ __decorate([
     __metadata("design:paramtypes", [String, String, Object]),
     __metadata("design:returntype", void 0)
 ], GroupsController.prototype, "enroll", null);
-__decorate([
-    (0, common_1.Post)('enroll'),
-    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN, client_1.Role.OPERATOR),
-    __param(0, (0, common_1.Body)('groupId')),
-    __param(1, (0, common_1.Body)('studentId')),
-    __param(2, (0, current_user_decorator_1.CurrentUser)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, Object]),
-    __metadata("design:returntype", void 0)
-], GroupsController.prototype, "enrollDirect", null);
 __decorate([
     (0, common_1.Delete)(':id/enroll/:studentId'),
     (0, roles_decorator_1.Roles)(client_1.Role.ADMIN, client_1.Role.OPERATOR),

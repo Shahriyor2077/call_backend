@@ -30,8 +30,7 @@ let AuthController = class AuthController {
         return this.authService.refresh(refreshToken);
     }
     me(user) {
-        const { password, ...result } = user;
-        return result;
+        return this.authService.getProfile(user);
     }
 };
 exports.AuthController = AuthController;

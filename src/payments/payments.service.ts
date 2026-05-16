@@ -2,15 +2,17 @@ import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/commo
 import { Role } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
+import { AuthUser } from '../common/types';
 
 @Injectable()
 export class PaymentsService {
   constructor(private prisma: PrismaService) { }
 
-  async getStatsByPeriod(user: any, from: Date, to: Date) {
+  async getStatsByPeriod(user: AuthUser, from: Date, to: Date) {
     const where: any = {
       centerId: user.centerId,
       isRefunded: false,
+      isDeleted: false,
       paidAt: { gte: from, lte: to }
     };
     if (user.role === Role.OPERATOR) where.operatorId = user.id;
@@ -29,7 +31,7 @@ export class PaymentsService {
     };
   }
 
-  async findAll(user: any, query?: {
+  async findAll(user: AuthUser, query?: {
     page?: number;
     limit?: number;
     studentId?: string;
@@ -41,7 +43,7 @@ export class PaymentsService {
     from?: string;
     to?: string;
   }) {
-    const where: any = { centerId: user.centerId };
+    const where: any = { centerId: user.centerId, isDeleted: false };
     if (user.role === Role.OPERATOR) where.operatorId = user.id;
     if (query?.studentId) where.studentId = query.studentId;
     if (query?.operatorId && user.role === Role.ADMIN) where.operatorId = query.operatorId;
@@ -72,6 +74,7 @@ export class PaymentsService {
         select: {
           id: true,
           amount: true,
+          discountAmount: true,
           type: true,
           method: true,
           isRefunded: true,
@@ -129,7 +132,7 @@ export class PaymentsService {
 
   async findOne(id: string, centerId: string) {
     const payment = await this.prisma.payment.findFirst({
-      where: { id, centerId },
+      where: { id, centerId, isDeleted: false },
       include: {
         student: { select: { id: true, name: true, phone: true } },
         operator: { select: { id: true, name: true } },
@@ -140,15 +143,16 @@ export class PaymentsService {
     return payment;
   }
 
-  async create(dto: CreatePaymentDto, user: any) {
+  async create(dto: CreatePaymentDto, user: AuthUser) {
     const student = await this.prisma.student.findFirst({
-      where: { id: dto.studentId, centerId: user.centerId },
+      where: { id: dto.studentId, centerId: user.centerId, isDeleted: false },
     });
     if (!student) throw new NotFoundException('Talaba topilmadi');
 
     return this.prisma.payment.create({
       data: {
         ...dto,
+        discountAmount: dto.discountAmount ?? 0,
         centerId: user.centerId,
         operatorId: user.id,
         paidAt: dto.paidAt ? new Date(dto.paidAt) : new Date(),
@@ -159,10 +163,10 @@ export class PaymentsService {
     });
   }
 
-  async refund(id: string, user: any) {
+  async refund(id: string, user: AuthUser) {
     if (user.role !== Role.ADMIN) throw new ForbiddenException('Faqat admin qaytara oladi');
     const payment = await this.prisma.payment.findFirst({
-      where: { id, centerId: user.centerId },
+      where: { id, centerId: user.centerId, isDeleted: false },
     });
     if (!payment) throw new NotFoundException('To\'lov topilmadi');
     if (payment.isRefunded) throw new ForbiddenException('Allaqachon qaytarilgan');
@@ -173,21 +177,21 @@ export class PaymentsService {
     });
   }
 
-  async update(id: string, dto: any, user: any) {
+  async update(id: string, dto: any, user: AuthUser) {
     if (user.role !== Role.ADMIN) throw new ForbiddenException('Faqat admin tahrirlaydi');
     const payment = await this.prisma.payment.findFirst({
-      where: { id, centerId: user.centerId },
+      where: { id, centerId: user.centerId, isDeleted: false },
     });
     if (!payment) throw new NotFoundException('To\'lov topilmadi');
     return this.prisma.payment.update({ where: { id }, data: dto });
   }
 
-  async remove(id: string, user: any) {
+  async remove(id: string, user: AuthUser) {
     if (user.role !== Role.ADMIN) throw new ForbiddenException('Faqat admin o\'chira oladi');
     const payment = await this.prisma.payment.findFirst({
-      where: { id, centerId: user.centerId },
+      where: { id, centerId: user.centerId, isDeleted: false },
     });
     if (!payment) throw new NotFoundException('To\'lov topilmadi');
-    return this.prisma.payment.delete({ where: { id } });
+    return this.prisma.payment.update({ where: { id }, data: { isDeleted: true } });
   }
 }

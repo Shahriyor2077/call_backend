@@ -5,6 +5,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import type { AuthUser } from '../common/types';
 import { Role } from '@prisma/client';
 
 @Controller('students')
@@ -14,31 +15,31 @@ export class StudentsController {
 
   @Get()
   @Roles(Role.ADMIN, Role.OPERATOR)
-  findAll(@CurrentUser() user: any) {
+  findAll(@CurrentUser() user: AuthUser) {
     return this.studentsService.findAll(user);
   }
 
   @Get('debtors')
   @Roles(Role.ADMIN, Role.OPERATOR)
-  getDebtors(@CurrentUser() user: any) {
+  getDebtors(@CurrentUser() user: AuthUser) {
     return this.studentsService.getDebtors(user);
   }
 
   @Get(':id')
   @Roles(Role.ADMIN, Role.OPERATOR)
-  findOne(@Param('id') id: string, @CurrentUser() user: any) {
+  findOne(@Param('id') id: string, @CurrentUser() user: AuthUser) {
     return this.studentsService.findOne(id, user);
   }
 
   @Post()
   @Roles(Role.ADMIN, Role.OPERATOR)
-  create(@Body() dto: CreateStudentDto, @CurrentUser() user: any) {
+  create(@Body() dto: CreateStudentDto, @CurrentUser() user: AuthUser) {
     return this.studentsService.create(dto, user);
   }
 
   @Put(':id')
   @Roles(Role.ADMIN, Role.OPERATOR)
-  update(@Param('id') id: string, @Body() dto: any, @CurrentUser() user: any) {
+  update(@Param('id') id: string, @Body() dto: any, @CurrentUser() user: AuthUser) {
     return this.studentsService.update(id, dto, user);
   }
 
@@ -47,7 +48,7 @@ export class StudentsController {
   async enroll(
     @Param('id') studentId: string,
     @Body('groupId') groupId: string,
-    @CurrentUser() user: any,
+    @CurrentUser() user: AuthUser,
   ) {
     await this.studentsService.findOne(studentId, user);
     return this.studentsService.enrollStudent(studentId, groupId, user);
@@ -55,7 +56,7 @@ export class StudentsController {
 
   @Delete(':id')
   @Roles(Role.ADMIN)
-  remove(@Param('id') id: string, @CurrentUser() user: any) {
+  remove(@Param('id') id: string, @CurrentUser() user: AuthUser) {
     return this.studentsService.remove(id, user);
   }
 }

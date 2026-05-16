@@ -1,12 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCourseDto } from './dto/create-course.dto';
+import { AuthUser } from '../common/types';
 
 @Injectable()
 export class CoursesService {
   constructor(private prisma: PrismaService) {}
 
-  findAll(user: any) {
+  findAll(user: AuthUser) {
     return this.prisma.course.findMany({
       where: { centerId: user.centerId, isActive: true },
       include: {
@@ -32,7 +33,7 @@ export class CoursesService {
     return course;
   }
 
-  async create(dto: CreateCourseDto, user: any) {
+  async create(dto: CreateCourseDto, user: AuthUser) {
     return this.prisma.course.create({
       data: {
         ...dto,
@@ -45,12 +46,12 @@ export class CoursesService {
     });
   }
 
-  async update(id: string, dto: any, user: any) {
+  async update(id: string, dto: any, user: AuthUser) {
     await this.findOne(id, user.centerId);
     return this.prisma.course.update({ where: { id }, data: dto });
   }
 
-  async remove(id: string, user: any) {
+  async remove(id: string, user: AuthUser) {
     await this.findOne(id, user.centerId);
     return this.prisma.course.update({ where: { id }, data: { isActive: false } });
   }

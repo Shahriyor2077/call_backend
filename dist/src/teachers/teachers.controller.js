@@ -35,6 +35,9 @@ let TeachersController = class TeachersController {
     update(id, dto, user) {
         return this.teachersService.update(id, dto, user.centerId);
     }
+    remove(id, user) {
+        return this.teachersService.remove(id, user.centerId);
+    }
 };
 exports.TeachersController = TeachersController;
 __decorate([
@@ -61,6 +64,14 @@ __decorate([
     __metadata("design:paramtypes", [String, Object, Object]),
     __metadata("design:returntype", void 0)
 ], TeachersController.prototype, "update", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], TeachersController.prototype, "remove", null);
 exports.TeachersController = TeachersController = __decorate([
     (0, common_1.Controller)('teachers'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),

@@ -5,6 +5,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import type { AuthUser } from '../common/types';
 import { Role } from '@prisma/client';
 
 @Controller('courses')
@@ -14,31 +15,31 @@ export class CoursesController {
 
   @Get()
   @Roles(Role.ADMIN, Role.OPERATOR)
-  findAll(@CurrentUser() user: any) {
+  findAll(@CurrentUser() user: AuthUser) {
     return this.coursesService.findAll(user);
   }
 
   @Get(':id')
   @Roles(Role.ADMIN, Role.OPERATOR)
-  findOne(@Param('id') id: string, @CurrentUser() user: any) {
+  findOne(@Param('id') id: string, @CurrentUser() user: AuthUser) {
     return this.coursesService.findOne(id, user.centerId);
   }
 
   @Post()
   @Roles(Role.ADMIN)
-  create(@Body() dto: CreateCourseDto, @CurrentUser() user: any) {
+  create(@Body() dto: CreateCourseDto, @CurrentUser() user: AuthUser) {
     return this.coursesService.create(dto, user);
   }
 
   @Put(':id')
   @Roles(Role.ADMIN)
-  update(@Param('id') id: string, @Body() dto: any, @CurrentUser() user: any) {
+  update(@Param('id') id: string, @Body() dto: any, @CurrentUser() user: AuthUser) {
     return this.coursesService.update(id, dto, user);
   }
 
   @Delete(':id')
   @Roles(Role.ADMIN)
-  remove(@Param('id') id: string, @CurrentUser() user: any) {
+  remove(@Param('id') id: string, @CurrentUser() user: AuthUser) {
     return this.coursesService.remove(id, user);
   }
 }

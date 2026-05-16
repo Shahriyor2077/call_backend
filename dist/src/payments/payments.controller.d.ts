@@ -1,9 +1,10 @@
 import { PaymentsService } from './payments.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
+import type { AuthUser } from '../common/types';
 export declare class PaymentsController {
     private paymentsService;
     constructor(paymentsService: PaymentsService);
-    getStats(user: any): Promise<{
+    getStats(user: AuthUser): Promise<{
         today: {
             sum: number;
             count: number;
@@ -17,7 +18,7 @@ export declare class PaymentsController {
             count: number;
         };
     }>;
-    findAll(user: any, query: any): Promise<{
+    findAll(user: AuthUser, query: any): Promise<{
         data: {
             id: string;
             student: {
@@ -52,6 +53,7 @@ export declare class PaymentsController {
             notes: string | null;
             isRefunded: boolean;
             amount: import("@prisma/client-runtime-utils").Decimal;
+            discountAmount: import("@prisma/client-runtime-utils").Decimal;
             method: import("@prisma/client").$Enums.PaymentMethod;
             paidAt: Date;
         }[];
@@ -62,7 +64,7 @@ export declare class PaymentsController {
             totalPages: number;
         };
     }>;
-    findOne(id: string, user: any): Promise<{
+    findOne(id: string, user: AuthUser): Promise<{
         center: {
             id: string;
             phone: string | null;
@@ -83,17 +85,19 @@ export declare class PaymentsController {
         centerId: string;
         createdAt: Date;
         updatedAt: Date;
+        isDeleted: boolean;
         operatorId: string | null;
         type: import("@prisma/client").$Enums.PaymentType;
         studentId: string;
         notes: string | null;
         isRefunded: boolean;
         amount: import("@prisma/client-runtime-utils").Decimal;
+        discountAmount: import("@prisma/client-runtime-utils").Decimal;
         method: import("@prisma/client").$Enums.PaymentMethod;
         refundedAt: Date | null;
         paidAt: Date;
     }>;
-    create(dto: CreatePaymentDto, user: any): Promise<{
+    create(dto: CreatePaymentDto, user: AuthUser): Promise<{
         student: {
             id: string;
             name: string;
@@ -103,57 +107,65 @@ export declare class PaymentsController {
         centerId: string;
         createdAt: Date;
         updatedAt: Date;
+        isDeleted: boolean;
         operatorId: string | null;
         type: import("@prisma/client").$Enums.PaymentType;
         studentId: string;
         notes: string | null;
         isRefunded: boolean;
         amount: import("@prisma/client-runtime-utils").Decimal;
+        discountAmount: import("@prisma/client-runtime-utils").Decimal;
         method: import("@prisma/client").$Enums.PaymentMethod;
         refundedAt: Date | null;
         paidAt: Date;
     }>;
-    update(id: string, dto: any, user: any): Promise<{
+    update(id: string, dto: any, user: AuthUser): Promise<{
         id: string;
         centerId: string;
         createdAt: Date;
         updatedAt: Date;
+        isDeleted: boolean;
         operatorId: string | null;
         type: import("@prisma/client").$Enums.PaymentType;
         studentId: string;
         notes: string | null;
         isRefunded: boolean;
         amount: import("@prisma/client-runtime-utils").Decimal;
+        discountAmount: import("@prisma/client-runtime-utils").Decimal;
         method: import("@prisma/client").$Enums.PaymentMethod;
         refundedAt: Date | null;
         paidAt: Date;
     }>;
-    refund(id: string, user: any): Promise<{
+    refund(id: string, user: AuthUser): Promise<{
         id: string;
         centerId: string;
         createdAt: Date;
         updatedAt: Date;
+        isDeleted: boolean;
         operatorId: string | null;
         type: import("@prisma/client").$Enums.PaymentType;
         studentId: string;
         notes: string | null;
         isRefunded: boolean;
         amount: import("@prisma/client-runtime-utils").Decimal;
+        discountAmount: import("@prisma/client-runtime-utils").Decimal;
         method: import("@prisma/client").$Enums.PaymentMethod;
         refundedAt: Date | null;
         paidAt: Date;
     }>;
-    remove(id: string, user: any): Promise<{
+    remove(id: string, user: AuthUser): Promise<{
         id: string;
         centerId: string;
         createdAt: Date;
         updatedAt: Date;
+        isDeleted: boolean;
         operatorId: string | null;
         type: import("@prisma/client").$Enums.PaymentType;
         studentId: string;
         notes: string | null;
         isRefunded: boolean;
         amount: import("@prisma/client-runtime-utils").Decimal;
+        discountAmount: import("@prisma/client-runtime-utils").Decimal;
         method: import("@prisma/client").$Enums.PaymentMethod;
         refundedAt: Date | null;
         paidAt: Date;

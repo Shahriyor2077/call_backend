@@ -66,7 +66,7 @@ let CentersService = class CentersService {
         const centers = await this.prisma.center.findMany({
             include: {
                 subscription: { include: { plan: true } },
-                _count: { select: { users: true, students: true } },
+                _count: { select: { users: true, students: { where: { isDeleted: false } } } },
                 users: {
                     where: { role: 'ADMIN' },
                     select: { id: true, name: true, phone: true },
@@ -86,7 +86,7 @@ let CentersService = class CentersService {
             where: { id },
             include: {
                 subscription: { include: { plan: true } },
-                _count: { select: { users: true, students: true, groups: true } },
+                _count: { select: { users: true, students: { where: { isDeleted: false } }, groups: true } },
             },
         });
         if (!center)

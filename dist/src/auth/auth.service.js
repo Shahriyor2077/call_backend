@@ -113,13 +113,19 @@ let AuthService = class AuthService {
                 where: { id: payload.sub },
             });
             if (!user || !user.isActive) {
-                throw new common_1.UnauthorizedException();
+                throw new common_1.UnauthorizedException('Foydalanuvchi topilmadi yoki bloklangan');
             }
             return this.generateTokens(user.id, user.phone, user.role);
         }
-        catch {
-            throw new common_1.UnauthorizedException('Token yaroqsiz');
+        catch (error) {
+            if (error instanceof common_1.UnauthorizedException)
+                throw error;
+            throw new common_1.UnauthorizedException('Token yaroqsiz yoki muddati tugagan');
         }
+    }
+    getProfile(user) {
+        const { password: _p, ...result } = user;
+        return result;
     }
     async generateTokens(userId, phone, role) {
         const payload = { sub: userId, phone, role };

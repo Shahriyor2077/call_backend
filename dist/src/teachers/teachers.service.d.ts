@@ -39,4 +39,14 @@ export declare class TeachersService {
         updatedAt: Date;
         specialty: string | null;
     }>;
+    remove(id: string, centerId: string): Promise<{
+        id: string;
+        phone: string;
+        name: string;
+        isActive: boolean;
+        centerId: string;
+        createdAt: Date;
+        updatedAt: Date;
+        specialty: string | null;
+    }>;
 }

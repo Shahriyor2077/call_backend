@@ -2,12 +2,13 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { GroupStatus, Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateGroupDto } from './dto/create-group.dto';
+import { AuthUser } from '../common/types';
 
 @Injectable()
 export class GroupsService {
   constructor(private prisma: PrismaService) {}
 
-  findAll(user: any) {
+  findAll(user: AuthUser) {
     return this.prisma.group.findMany({
       where: { centerId: user.centerId, isArchived: false },
       include: {
@@ -39,11 +40,18 @@ export class GroupsService {
     return group;
   }
 
-  async create(dto: CreateGroupDto, user: any) {
+  async create(dto: CreateGroupDto, user: AuthUser) {
     const course = await this.prisma.course.findFirst({
       where: { id: dto.courseId, centerId: user.centerId },
     });
     if (!course) throw new NotFoundException('Kurs topilmadi');
+
+    if (dto.teacherId) {
+      const teacher = await this.prisma.teacher.findFirst({
+        where: { id: dto.teacherId, centerId: user.centerId },
+      });
+      if (!teacher) throw new NotFoundException('O\'qituvchi topilmadi');
+    }
 
     const data: any = {
       ...dto,
@@ -69,13 +77,13 @@ export class GroupsService {
         throw new BadRequestException(`Ma'lumotlar bazasi xatosi: ${e.code}`);
       }
       if (e instanceof Prisma.PrismaClientValidationError) {
-        throw new BadRequestException('Yuborilgan ma\'lumotlarda xatolik bor');
+        throw new BadRequestException('Prisma validation: ' + e.message.split('\n').slice(-3).join(' '));
       }
       throw e;
     }
   }
 
-  async update(id: string, dto: any, user: any) {
+  async update(id: string, dto: any, user: AuthUser) {
     const group = await this.findOne(id, user.centerId);
 
     if (dto.maxStudents !== undefined) {
@@ -94,7 +102,7 @@ export class GroupsService {
     return this.prisma.group.update({ where: { id }, data });
   }
 
-  async archive(id: string, user: any) {
+  async archive(id: string, user: AuthUser) {
     await this.findOne(id, user.centerId);
     return this.prisma.group.update({ where: { id }, data: { isArchived: true } });
   }
@@ -126,7 +134,7 @@ export class GroupsService {
     if (group.status !== GroupStatus.ACTIVE && group.status !== GroupStatus.GATHERING) {
       throw new BadRequestException('Bu guruhga yozilish mumkin emas');
     }
-    if (group._count.enrollments >= group.maxStudents) {
+    if (group.maxStudents != null && group._count.enrollments >= group.maxStudents) {
       throw new BadRequestException('Guruh to\'lgan');
     }
 

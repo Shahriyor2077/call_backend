@@ -48,7 +48,7 @@ __decorate([
 ], CreateGroupDto.prototype, "type", void 0);
 __decorate([
     (0, class_validator_1.IsInt)(),
-    (0, class_validator_1.IsPositive)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
 ], CreateGroupDto.prototype, "maxStudents", void 0);
 __decorate([
@@ -82,13 +82,13 @@ __decorate([
     __metadata("design:type", Array)
 ], CreateGroupDto.prototype, "days", void 0);
 __decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.Matches)(/^\d{2}:\d{2}$/, { message: 'startTime HH:mm formatida bo\'lishi kerak' }),
     __metadata("design:type", String)
 ], CreateGroupDto.prototype, "startTime", void 0);
 __decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.Matches)(/^\d{2}:\d{2}$/, { message: 'endTime HH:mm formatida bo\'lishi kerak' }),
     __metadata("design:type", String)
 ], CreateGroupDto.prototype, "endTime", void 0);
 __decorate([

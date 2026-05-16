@@ -22,6 +22,7 @@ let PaymentsService = class PaymentsService {
         const where = {
             centerId: user.centerId,
             isRefunded: false,
+            isDeleted: false,
             paidAt: { gte: from, lte: to }
         };
         if (user.role === client_1.Role.OPERATOR)
@@ -39,7 +40,7 @@ let PaymentsService = class PaymentsService {
         };
     }
     async findAll(user, query) {
-        const where = { centerId: user.centerId };
+        const where = { centerId: user.centerId, isDeleted: false };
         if (user.role === client_1.Role.OPERATOR)
             where.operatorId = user.id;
         if (query?.studentId)
@@ -75,6 +76,7 @@ let PaymentsService = class PaymentsService {
                 select: {
                     id: true,
                     amount: true,
+                    discountAmount: true,
                     type: true,
                     method: true,
                     isRefunded: true,
@@ -130,7 +132,7 @@ let PaymentsService = class PaymentsService {
     }
     async findOne(id, centerId) {
         const payment = await this.prisma.payment.findFirst({
-            where: { id, centerId },
+            where: { id, centerId, isDeleted: false },
             include: {
                 student: { select: { id: true, name: true, phone: true } },
                 operator: { select: { id: true, name: true } },
@@ -143,13 +145,14 @@ let PaymentsService = class PaymentsService {
     }
     async create(dto, user) {
         const student = await this.prisma.student.findFirst({
-            where: { id: dto.studentId, centerId: user.centerId },
+            where: { id: dto.studentId, centerId: user.centerId, isDeleted: false },
         });
         if (!student)
             throw new common_1.NotFoundException('Talaba topilmadi');
         return this.prisma.payment.create({
             data: {
                 ...dto,
+                discountAmount: dto.discountAmount ?? 0,
                 centerId: user.centerId,
                 operatorId: user.id,
                 paidAt: dto.paidAt ? new Date(dto.paidAt) : new Date(),
@@ -163,7 +166,7 @@ let PaymentsService = class PaymentsService {
         if (user.role !== client_1.Role.ADMIN)
             throw new common_1.ForbiddenException('Faqat admin qaytara oladi');
         const payment = await this.prisma.payment.findFirst({
-            where: { id, centerId: user.centerId },
+            where: { id, centerId: user.centerId, isDeleted: false },
         });
         if (!payment)
             throw new common_1.NotFoundException('To\'lov topilmadi');
@@ -178,7 +181,7 @@ let PaymentsService = class PaymentsService {
         if (user.role !== client_1.Role.ADMIN)
             throw new common_1.ForbiddenException('Faqat admin tahrirlaydi');
         const payment = await this.prisma.payment.findFirst({
-            where: { id, centerId: user.centerId },
+            where: { id, centerId: user.centerId, isDeleted: false },
         });
         if (!payment)
             throw new common_1.NotFoundException('To\'lov topilmadi');
@@ -188,11 +191,11 @@ let PaymentsService = class PaymentsService {
         if (user.role !== client_1.Role.ADMIN)
             throw new common_1.ForbiddenException('Faqat admin o\'chira oladi');
         const payment = await this.prisma.payment.findFirst({
-            where: { id, centerId: user.centerId },
+            where: { id, centerId: user.centerId, isDeleted: false },
         });
         if (!payment)
             throw new common_1.NotFoundException('To\'lov topilmadi');
-        return this.prisma.payment.delete({ where: { id } });
+        return this.prisma.payment.update({ where: { id }, data: { isDeleted: true } });
     }
 };
 exports.PaymentsService = PaymentsService;

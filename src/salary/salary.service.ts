@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, Role } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { AuthUser } from '../common/types';
 
 @Injectable()
 export class SalaryService {
   constructor(private prisma: PrismaService) { }
 
-  async getMysalary(user: any) {
+  async getMysalary(user: AuthUser) {
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
@@ -15,6 +16,7 @@ export class SalaryService {
       where: {
         operatorId: user.id,
         isRefunded: false,
+        isDeleted: false,
         paidAt: { gte: startOfMonth, lte: endOfMonth },
       },
       include: { student: { select: { name: true } } },
@@ -42,7 +44,7 @@ export class SalaryService {
     };
   }
 
-  async getReport(user: any, month?: string) {
+  async getReport(user: AuthUser, month?: string) {
     let year: number, monthNum: number;
     if (month) {
       [year, monthNum] = month.split('-').map(Number);
@@ -60,12 +62,15 @@ export class SalaryService {
       include: { salarySetting: true },
     });
 
+    const monthStr = `${year}-${String(monthNum).padStart(2, '0')}`;
+
     const report = await Promise.all(
       operators.map(async (op) => {
         const payments = await this.prisma.payment.findMany({
           where: {
             operatorId: op.id,
             isRefunded: false,
+            isDeleted: false,
             paidAt: { gte: startOfMonth, lte: endOfMonth },
           },
         });
@@ -78,6 +83,11 @@ export class SalaryService {
         );
         const salary = totalAmount.mul(percentage).div(100).plus(fixedAmount);
 
+        // Check if already paid
+        const paid = await this.prisma.salaryPayment.findFirst({
+          where: { operatorId: op.id, month: monthStr },
+        });
+
         return {
           operator: { id: op.id, name: op.name, phone: op.phone },
           totalPayments: totalAmount.toNumber(),
@@ -85,14 +95,62 @@ export class SalaryService {
           percentage: percentage.toNumber(),
           fixedAmount: fixedAmount.toNumber(),
           salary: parseFloat(salary.toFixed(2)),
+          isPaid: !!paid,
+          paidAt: paid?.paidAt,
         };
       }),
     );
 
     return {
-      month: `${year}-${String(monthNum).padStart(2, '0')}`,
+      month: monthStr,
       operators: report,
       totalSalary: parseFloat(report.reduce((sum, r) => sum + r.salary, 0).toFixed(2)),
     };
+  }
+
+  async paySalary(
+    user: AuthUser,
+    operatorId: string,
+    data: { month: string; amount: number; bonusAmount: number; fixedAmount: number; notes?: string },
+  ) {
+    const totalAmount = data.amount + data.bonusAmount + data.fixedAmount;
+
+    const payment = await this.prisma.salaryPayment.create({
+      data: {
+        operatorId,
+        month: data.month,
+        amount: data.amount,
+        bonusAmount: data.bonusAmount,
+        fixedAmount: data.fixedAmount,
+        totalAmount,
+        notes: data.notes,
+        paidBy: user.name,
+      },
+    });
+
+    return payment;
+  }
+
+  async getPaymentHistory(operatorId: string) {
+    const payments = await this.prisma.salaryPayment.findMany({
+      where: { operatorId },
+      orderBy: { paidAt: 'desc' },
+    });
+
+    return payments;
+  }
+
+  async getAllPaymentHistory(month?: string) {
+    const where: any = {};
+    if (month) {
+      where.month = month;
+    }
+
+    const payments = await this.prisma.salaryPayment.findMany({
+      where,
+      orderBy: { paidAt: 'desc' },
+    });
+
+    return payments;
   }
 }

@@ -1,5 +1,6 @@
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
+import type { AuthUser } from '../common/types';
 export declare class AuthController {
     private authService;
     constructor(authService: AuthService);
@@ -38,5 +39,22 @@ export declare class AuthController {
         accessToken: string;
         refreshToken: string;
     }>;
-    me(user: any): any;
+    me(user: AuthUser): {
+        id: string;
+        name: string;
+        phone: string;
+        role: import("@prisma/client").Role;
+        centerId: string;
+        isActive: boolean;
+        center?: {
+            id: string;
+            name: string;
+            subscription?: {
+                status: string;
+                endDate: Date;
+            } | null;
+        } | null;
+        createdAt: Date;
+        updatedAt: Date;
+    };
 }

@@ -31,4 +31,10 @@ export class TeachersService {
     if (!teacher) throw new NotFoundException('O\'qituvchi topilmadi');
     return this.prisma.teacher.update({ where: { id }, data: dto });
   }
+
+  async remove(id: string, centerId: string) {
+    const teacher = await this.prisma.teacher.findFirst({ where: { id, centerId } });
+    if (!teacher) throw new NotFoundException('O\'qituvchi topilmadi');
+    return this.prisma.teacher.delete({ where: { id } });
+  }
 }

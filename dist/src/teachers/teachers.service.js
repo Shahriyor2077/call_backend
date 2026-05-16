@@ -41,6 +41,12 @@ let TeachersService = class TeachersService {
             throw new common_1.NotFoundException('O\'qituvchi topilmadi');
         return this.prisma.teacher.update({ where: { id }, data: dto });
     }
+    async remove(id, centerId) {
+        const teacher = await this.prisma.teacher.findFirst({ where: { id, centerId } });
+        if (!teacher)
+            throw new common_1.NotFoundException('O\'qituvchi topilmadi');
+        return this.prisma.teacher.delete({ where: { id } });
+    }
 };
 exports.TeachersService = TeachersService;
 exports.TeachersService = TeachersService = __decorate([

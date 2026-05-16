@@ -3,6 +3,7 @@ import { Role } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { GroupsService } from '../groups/groups.service';
+import { AuthUser } from '../common/types';
 
 @Injectable()
 export class StudentsService {
@@ -11,12 +12,13 @@ export class StudentsService {
     private groupsService: GroupsService,
   ) { }
 
-  async getDebtors(user: any) {
+  async getDebtors(user: AuthUser) {
     const now = new Date();
 
     const students = await this.prisma.student.findMany({
       where: {
         centerId: user.centerId,
+        isDeleted: false,
         enrollments: { some: { isActive: true } },
       },
       include: {
@@ -62,7 +64,10 @@ export class StudentsService {
         enrollmentDetails.push({ group, monthlyPrice, months, expected, enrolledAt: enrollment.enrolledAt });
       }
 
-      const totalPaid = student.payments.reduce((s, p) => s + Number(p.amount), 0);
+      const totalPaid = student.payments.reduce(
+        (s, p) => s + Number(p.amount) + Number(p.discountAmount || 0),
+        0,
+      );
       const debt = totalExpected - totalPaid;
 
       if (debt > 0) {
@@ -73,8 +78,8 @@ export class StudentsService {
     return debtors.sort((a, b) => b.debt - a.debt);
   }
 
-  findAll(user: any) {
-    const where: any = { centerId: user.centerId };
+  findAll(user: AuthUser) {
+    const where: any = { centerId: user.centerId, isDeleted: false };
     if (user.role === Role.OPERATOR) where.operatorId = user.id;
     return this.prisma.student.findMany({
       where,
@@ -89,8 +94,8 @@ export class StudentsService {
     });
   }
 
-  async findOne(id: string, user: any) {
-    const where: any = { id, centerId: user.centerId };
+  async findOne(id: string, user: AuthUser) {
+    const where: any = { id, centerId: user.centerId, isDeleted: false };
     if (user.role === Role.OPERATOR) where.operatorId = user.id;
     const student = await this.prisma.student.findFirst({
       where,
@@ -106,7 +111,7 @@ export class StudentsService {
     return student;
   }
 
-  async create(dto: CreateStudentDto, user: any) {
+  async create(dto: CreateStudentDto, user: AuthUser) {
     const { groupId, ...studentData } = dto;
 
     const data: any = { ...studentData, centerId: user.centerId, operatorId: user.id };
@@ -122,7 +127,7 @@ export class StudentsService {
     return student;
   }
 
-  async update(id: string, dto: any, user: any) {
+  async update(id: string, dto: any, user: AuthUser) {
     await this.findOne(id, user);
     const data: any = { ...dto };
     if (data.birthDate) data.birthDate = new Date(data.birthDate);
@@ -130,12 +135,15 @@ export class StudentsService {
     return this.prisma.student.update({ where: { id }, data });
   }
 
-  async enrollStudent(studentId: string, groupId: string, user: any) {
+  async enrollStudent(studentId: string, groupId: string, user: AuthUser) {
     return this.groupsService.enroll(groupId, studentId, user.centerId);
   }
 
-  async remove(id: string, user: any) {
+  async remove(id: string, user: AuthUser) {
     const student = await this.findOne(id, user);
-    return this.prisma.student.delete({ where: { id: student.id } });
+    return this.prisma.$transaction(async (tx) => {
+      await tx.enrollment.deleteMany({ where: { studentId: student.id } });
+      return tx.student.update({ where: { id: student.id }, data: { isDeleted: true } });
+    });
   }
 }

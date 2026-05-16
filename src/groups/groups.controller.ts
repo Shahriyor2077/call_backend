@@ -5,6 +5,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import type { AuthUser } from '../common/types';
 import { Role } from '@prisma/client';
 
 @Controller('groups')
@@ -14,31 +15,31 @@ export class GroupsController {
 
   @Get()
   @Roles(Role.ADMIN, Role.OPERATOR)
-  findAll(@CurrentUser() user: any) {
+  findAll(@CurrentUser() user: AuthUser) {
     return this.groupsService.findAll(user);
   }
 
   @Get(':id')
   @Roles(Role.ADMIN, Role.OPERATOR)
-  findOne(@Param('id') id: string, @CurrentUser() user: any) {
+  findOne(@Param('id') id: string, @CurrentUser() user: AuthUser) {
     return this.groupsService.findOne(id, user.centerId);
   }
 
   @Post()
   @Roles(Role.ADMIN)
-  create(@Body() dto: CreateGroupDto, @CurrentUser() user: any) {
+  create(@Body() dto: CreateGroupDto, @CurrentUser() user: AuthUser) {
     return this.groupsService.create(dto, user);
   }
 
   @Put(':id')
   @Roles(Role.ADMIN)
-  update(@Param('id') id: string, @Body() dto: any, @CurrentUser() user: any) {
+  update(@Param('id') id: string, @Body() dto: any, @CurrentUser() user: AuthUser) {
     return this.groupsService.update(id, dto, user);
   }
 
   @Delete(':id')
   @Roles(Role.ADMIN)
-  archive(@Param('id') id: string, @CurrentUser() user: any) {
+  archive(@Param('id') id: string, @CurrentUser() user: AuthUser) {
     return this.groupsService.archive(id, user);
   }
 
@@ -47,17 +48,7 @@ export class GroupsController {
   enroll(
     @Param('id') groupId: string,
     @Body('studentId') studentId: string,
-    @CurrentUser() user: any,
-  ) {
-    return this.groupsService.enroll(groupId, studentId, user.centerId);
-  }
-
-  @Post('enroll')
-  @Roles(Role.ADMIN, Role.OPERATOR)
-  enrollDirect(
-    @Body('groupId') groupId: string,
-    @Body('studentId') studentId: string,
-    @CurrentUser() user: any,
+    @CurrentUser() user: AuthUser,
   ) {
     return this.groupsService.enroll(groupId, studentId, user.centerId);
   }
@@ -67,7 +58,7 @@ export class GroupsController {
   unenroll(
     @Param('id') groupId: string,
     @Param('studentId') studentId: string,
-    @CurrentUser() user: any,
+    @CurrentUser() user: AuthUser,
   ) {
     return this.groupsService.unenroll(groupId, studentId, user.centerId);
   }
@@ -78,7 +69,7 @@ export class GroupsController {
     @Body('studentId') studentId: string,
     @Body('fromGroupId') fromGroupId: string,
     @Body('toGroupId') toGroupId: string,
-    @CurrentUser() user: any,
+    @CurrentUser() user: AuthUser,
   ) {
     return this.groupsService.transfer(studentId, fromGroupId, toGroupId, user.centerId);
   }

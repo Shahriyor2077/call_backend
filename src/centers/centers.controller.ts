@@ -5,6 +5,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import type { AuthUser } from '../common/types';
 import { Role } from '@prisma/client';
 
 @Controller('centers')
@@ -47,7 +48,7 @@ export class CentersController {
   @Put(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.SUPERADMIN, Role.ADMIN)
-  update(@Param('id') id: string, @Body() dto: any, @CurrentUser() user: any) {
+  update(@Param('id') id: string, @Body() dto: any, @CurrentUser() user: AuthUser) {
     return this.centersService.update(id, dto, user);
   }
 

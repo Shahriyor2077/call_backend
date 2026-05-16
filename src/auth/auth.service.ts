@@ -5,6 +5,7 @@ import * as bcrypt from 'bcryptjs';
 import { SubscriptionStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
+import { AuthUser } from '../common/types';
 
 @Injectable()
 export class AuthService {
@@ -81,13 +82,19 @@ export class AuthService {
       });
 
       if (!user || !user.isActive) {
-        throw new UnauthorizedException();
+        throw new UnauthorizedException('Foydalanuvchi topilmadi yoki bloklangan');
       }
 
       return this.generateTokens(user.id, user.phone, user.role);
-    } catch {
-      throw new UnauthorizedException('Token yaroqsiz');
+    } catch (error) {
+      if (error instanceof UnauthorizedException) throw error;
+      throw new UnauthorizedException('Token yaroqsiz yoki muddati tugagan');
     }
+  }
+
+  getProfile(user: AuthUser) {
+    const { password: _p, ...result } = user;
+    return result;
   }
 
   private async generateTokens(userId: string, phone: string, role: string) {

@@ -1,20 +1,23 @@
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
+import type { AuthUser } from '../common/types';
 export declare class StudentsController {
     private studentsService;
     constructor(studentsService: StudentsService);
-    findAll(user: any): import("@prisma/client").Prisma.PrismaPromise<({
+    findAll(user: AuthUser): import("@prisma/client").Prisma.PrismaPromise<({
         payments: {
             id: string;
             centerId: string;
             createdAt: Date;
             updatedAt: Date;
+            isDeleted: boolean;
             operatorId: string | null;
             type: import("@prisma/client").$Enums.PaymentType;
             studentId: string;
             notes: string | null;
             isRefunded: boolean;
             amount: import("@prisma/client-runtime-utils").Decimal;
+            discountAmount: import("@prisma/client-runtime-utils").Decimal;
             method: import("@prisma/client").$Enums.PaymentMethod;
             refundedAt: Date | null;
             paidAt: Date;
@@ -52,15 +55,15 @@ export declare class StudentsController {
                 days: string[];
                 durationUnit: string | null;
                 duration: number | null;
-                maxStudents: number;
+                maxStudents: number | null;
                 isArchived: boolean;
                 courseId: string;
                 type: import("@prisma/client").$Enums.GroupType;
                 meetLink: string | null;
                 platform: string | null;
                 room: string | null;
-                startTime: string;
-                endTime: string;
+                startTime: string | null;
+                endTime: string | null;
                 teacherId: string | null;
             };
         } & {
@@ -77,27 +80,30 @@ export declare class StudentsController {
         centerId: string;
         createdAt: Date;
         updatedAt: Date;
+        isDeleted: boolean;
         operatorId: string | null;
-        notes: string | null;
         surname: string | null;
         parentPhone: string | null;
         email: string | null;
         gender: string | null;
         birthDate: Date | null;
+        notes: string | null;
     })[]>;
-    getDebtors(user: any): Promise<any[]>;
-    findOne(id: string, user: any): Promise<{
+    getDebtors(user: AuthUser): Promise<any[]>;
+    findOne(id: string, user: AuthUser): Promise<{
         payments: {
             id: string;
             centerId: string;
             createdAt: Date;
             updatedAt: Date;
+            isDeleted: boolean;
             operatorId: string | null;
             type: import("@prisma/client").$Enums.PaymentType;
             studentId: string;
             notes: string | null;
             isRefunded: boolean;
             amount: import("@prisma/client-runtime-utils").Decimal;
+            discountAmount: import("@prisma/client-runtime-utils").Decimal;
             method: import("@prisma/client").$Enums.PaymentMethod;
             refundedAt: Date | null;
             paidAt: Date;
@@ -135,15 +141,15 @@ export declare class StudentsController {
                 days: string[];
                 durationUnit: string | null;
                 duration: number | null;
-                maxStudents: number;
+                maxStudents: number | null;
                 isArchived: boolean;
                 courseId: string;
                 type: import("@prisma/client").$Enums.GroupType;
                 meetLink: string | null;
                 platform: string | null;
                 room: string | null;
-                startTime: string;
-                endTime: string;
+                startTime: string | null;
+                endTime: string | null;
                 teacherId: string | null;
             };
         } & {
@@ -160,64 +166,68 @@ export declare class StudentsController {
         centerId: string;
         createdAt: Date;
         updatedAt: Date;
+        isDeleted: boolean;
         operatorId: string | null;
-        notes: string | null;
         surname: string | null;
         parentPhone: string | null;
         email: string | null;
         gender: string | null;
         birthDate: Date | null;
+        notes: string | null;
     }>;
-    create(dto: CreateStudentDto, user: any): Promise<{
+    create(dto: CreateStudentDto, user: AuthUser): Promise<{
         id: string;
         phone: string;
         name: string;
         centerId: string;
         createdAt: Date;
         updatedAt: Date;
+        isDeleted: boolean;
         operatorId: string | null;
-        notes: string | null;
         surname: string | null;
         parentPhone: string | null;
         email: string | null;
         gender: string | null;
         birthDate: Date | null;
+        notes: string | null;
     }>;
-    update(id: string, dto: any, user: any): Promise<{
+    update(id: string, dto: any, user: AuthUser): Promise<{
         id: string;
         phone: string;
         name: string;
         centerId: string;
         createdAt: Date;
         updatedAt: Date;
+        isDeleted: boolean;
         operatorId: string | null;
-        notes: string | null;
         surname: string | null;
         parentPhone: string | null;
         email: string | null;
         gender: string | null;
         birthDate: Date | null;
+        notes: string | null;
     }>;
-    enroll(studentId: string, groupId: string, user: any): Promise<{
+    enroll(studentId: string, groupId: string, user: AuthUser): Promise<{
         id: string;
         isActive: boolean;
         studentId: string;
         groupId: string;
         enrolledAt: Date;
     }>;
-    remove(id: string, user: any): Promise<{
+    remove(id: string, user: AuthUser): Promise<{
         id: string;
         phone: string;
         name: string;
         centerId: string;
         createdAt: Date;
         updatedAt: Date;
+        isDeleted: boolean;
         operatorId: string | null;
-        notes: string | null;
         surname: string | null;
         parentPhone: string | null;
         email: string | null;
         gender: string | null;
         birthDate: Date | null;
+        notes: string | null;
     }>;
 }

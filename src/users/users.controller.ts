@@ -5,6 +5,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import type { AuthUser } from '../common/types';
 import { Role } from '@prisma/client';
 
 @Controller('users')
@@ -14,7 +15,7 @@ export class UsersController {
 
   @Get()
   @Roles(Role.SUPERADMIN, Role.ADMIN)
-  findAll(@CurrentUser() user: any, @Query('role') role?: string) {
+  findAll(@CurrentUser() user: AuthUser, @Query('role') role?: string) {
     return this.usersService.findAll(user, role);
   }
 
@@ -26,19 +27,19 @@ export class UsersController {
 
   @Post()
   @Roles(Role.SUPERADMIN, Role.ADMIN)
-  create(@Body() dto: CreateUserDto, @CurrentUser() user: any) {
+  create(@Body() dto: CreateUserDto, @CurrentUser() user: AuthUser) {
     return this.usersService.create(dto, user);
   }
 
   @Put(':id')
   @Roles(Role.SUPERADMIN, Role.ADMIN)
-  update(@Param('id') id: string, @Body() dto: any, @CurrentUser() user: any) {
+  update(@Param('id') id: string, @Body() dto: any, @CurrentUser() user: AuthUser) {
     return this.usersService.update(id, dto, user);
   }
 
   @Delete(':id')
   @Roles(Role.SUPERADMIN, Role.ADMIN)
-  remove(@Param('id') id: string, @CurrentUser() user: any) {
+  remove(@Param('id') id: string, @CurrentUser() user: AuthUser) {
     return this.usersService.remove(id, user);
   }
 
@@ -47,7 +48,7 @@ export class UsersController {
   updateSalaryPercentage(
     @Param('id') id: string,
     @Body() body: { percentage: number; fixedAmount?: number },
-    @CurrentUser() user: any,
+    @CurrentUser() user: AuthUser,
   ) {
     return this.usersService.updateSalaryPercentage(id, body.percentage, user.centerId, body.fixedAmount);
   }
