@@ -37,6 +37,18 @@ export class UsersController {
     return this.usersService.update(id, dto, user);
   }
 
+  @Put(':id/block')
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  block(@Param('id') id: string, @CurrentUser() user: AuthUser) {
+    return this.usersService.block(id, user);
+  }
+
+  @Put(':id/unblock')
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  unblock(@Param('id') id: string, @CurrentUser() user: AuthUser) {
+    return this.usersService.unblock(id, user);
+  }
+
   @Delete(':id')
   @Roles(Role.SUPERADMIN, Role.ADMIN)
   remove(@Param('id') id: string, @CurrentUser() user: AuthUser) {

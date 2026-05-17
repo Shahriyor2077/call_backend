@@ -80,17 +80,17 @@ export declare class GroupsController {
                 id: string;
                 phone: string;
                 name: string;
+                isDeleted: boolean;
                 centerId: string;
                 createdAt: Date;
                 updatedAt: Date;
-                isDeleted: boolean;
                 operatorId: string | null;
+                notes: string | null;
                 surname: string | null;
                 parentPhone: string | null;
                 email: string | null;
                 gender: string | null;
                 birthDate: Date | null;
-                notes: string | null;
             };
         } & {
             id: string;

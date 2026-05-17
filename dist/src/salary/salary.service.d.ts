@@ -16,10 +16,10 @@ export declare class SalaryService {
             };
         } & {
             id: string;
+            isDeleted: boolean;
             centerId: string;
             createdAt: Date;
             updatedAt: Date;
-            isDeleted: boolean;
             operatorId: string | null;
             type: import("@prisma/client").$Enums.PaymentType;
             studentId: string;
@@ -65,8 +65,8 @@ export declare class SalaryService {
         notes: string | null;
         amount: Prisma.Decimal;
         paidAt: Date;
-        bonusAmount: Prisma.Decimal;
         totalAmount: Prisma.Decimal;
+        bonusAmount: Prisma.Decimal;
         paidBy: string | null;
     }>;
     getPaymentHistory(operatorId: string): Promise<{
@@ -78,8 +78,8 @@ export declare class SalaryService {
         notes: string | null;
         amount: Prisma.Decimal;
         paidAt: Date;
-        bonusAmount: Prisma.Decimal;
         totalAmount: Prisma.Decimal;
+        bonusAmount: Prisma.Decimal;
         paidBy: string | null;
     }[]>;
     getAllPaymentHistory(month?: string): Promise<{
@@ -91,8 +91,8 @@ export declare class SalaryService {
         notes: string | null;
         amount: Prisma.Decimal;
         paidAt: Date;
-        bonusAmount: Prisma.Decimal;
         totalAmount: Prisma.Decimal;
+        bonusAmount: Prisma.Decimal;
         paidBy: string | null;
     }[]>;
 }

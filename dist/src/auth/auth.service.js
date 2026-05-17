@@ -65,7 +65,7 @@ let AuthService = class AuthService {
                 center: { include: { subscription: true } },
             },
         });
-        if (!user) {
+        if (!user || user.isDeleted) {
             throw new common_1.UnauthorizedException('Telefon raqam yoki parol noto\'g\'ri');
         }
         if (!user.isActive) {
@@ -112,7 +112,7 @@ let AuthService = class AuthService {
             const user = await this.prisma.user.findUnique({
                 where: { id: payload.sub },
             });
-            if (!user || !user.isActive) {
+            if (!user || !user.isActive || user.isDeleted) {
                 throw new common_1.UnauthorizedException('Foydalanuvchi topilmadi yoki bloklangan');
             }
             return this.generateTokens(user.id, user.phone, user.role);

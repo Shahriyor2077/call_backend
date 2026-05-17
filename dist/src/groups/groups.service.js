@@ -103,12 +103,18 @@ let GroupsService = class GroupsService {
             }
         }
         const data = { ...dto };
-        if (data.startDate)
-            data.startDate = new Date(data.startDate).toISOString();
-        if (data.endDate)
-            data.endDate = new Date(data.endDate).toISOString();
-        else
+        if (data.startDate !== undefined) {
+            data.startDate = data.startDate ? new Date(data.startDate).toISOString() : null;
+        }
+        else {
+            delete data.startDate;
+        }
+        if (data.endDate !== undefined) {
+            data.endDate = data.endDate ? new Date(data.endDate).toISOString() : null;
+        }
+        else {
             delete data.endDate;
+        }
         return this.prisma.group.update({ where: { id }, data });
     }
     async archive(id, user) {

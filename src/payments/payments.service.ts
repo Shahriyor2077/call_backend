@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
@@ -149,10 +149,18 @@ export class PaymentsService {
     });
     if (!student) throw new NotFoundException('Talaba topilmadi');
 
+    const discountAmount = Number(dto.discountAmount ?? 0);
+    const paidAmount = Number(dto.totalAmount) - discountAmount;
+    if (paidAmount < 0) throw new BadRequestException('Chegirma to\'lov miqdoridan katta bo\'lishi mumkin emas');
+
     return this.prisma.payment.create({
       data: {
-        ...dto,
-        discountAmount: dto.discountAmount ?? 0,
+        studentId: dto.studentId,
+        amount: paidAmount,
+        discountAmount,
+        type: dto.type,
+        method: dto.method,
+        notes: dto.notes,
         centerId: user.centerId,
         operatorId: user.id,
         paidAt: dto.paidAt ? new Date(dto.paidAt) : new Date(),
@@ -183,7 +191,19 @@ export class PaymentsService {
       where: { id, centerId: user.centerId, isDeleted: false },
     });
     if (!payment) throw new NotFoundException('To\'lov topilmadi');
-    return this.prisma.payment.update({ where: { id }, data: dto });
+
+    const updateData: any = {};
+    if (dto.notes !== undefined) updateData.notes = dto.notes;
+
+    if (dto.totalAmount !== undefined) {
+      const discountAmount = Number(dto.discountAmount ?? payment.discountAmount ?? 0);
+      const paidAmount = Number(dto.totalAmount) - discountAmount;
+      if (paidAmount < 0) throw new BadRequestException('Chegirma to\'lov miqdoridan katta bo\'lishi mumkin emas');
+      updateData.amount = paidAmount;
+      updateData.discountAmount = discountAmount;
+    }
+
+    return this.prisma.payment.update({ where: { id }, data: updateData });
   }
 
   async remove(id: string, user: AuthUser) {

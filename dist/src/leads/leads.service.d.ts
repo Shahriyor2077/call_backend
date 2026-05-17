@@ -23,9 +23,9 @@ export declare class LeadsService {
             updatedAt: Date;
             status: import("@prisma/client").$Enums.LeadStatus;
             operatorId: string | null;
-            notes: string | null;
             interest: string | null;
             source: string | null;
+            notes: string | null;
         })[];
         meta: {
             total: number;
@@ -50,9 +50,9 @@ export declare class LeadsService {
         updatedAt: Date;
         status: import("@prisma/client").$Enums.LeadStatus;
         operatorId: string | null;
-        notes: string | null;
         interest: string | null;
         source: string | null;
+        notes: string | null;
     }>;
     create(dto: CreateLeadDto, user: AuthUser): Promise<{
         id: string;
@@ -63,9 +63,9 @@ export declare class LeadsService {
         updatedAt: Date;
         status: import("@prisma/client").$Enums.LeadStatus;
         operatorId: string | null;
-        notes: string | null;
         interest: string | null;
         source: string | null;
+        notes: string | null;
     }>;
     updateStatus(id: string, dto: UpdateLeadStatusDto, user: AuthUser): Promise<{
         id: string;
@@ -76,9 +76,9 @@ export declare class LeadsService {
         updatedAt: Date;
         status: import("@prisma/client").$Enums.LeadStatus;
         operatorId: string | null;
-        notes: string | null;
         interest: string | null;
         source: string | null;
+        notes: string | null;
     }>;
     update(id: string, dto: any, user: AuthUser): Promise<{
         id: string;
@@ -89,9 +89,9 @@ export declare class LeadsService {
         updatedAt: Date;
         status: import("@prisma/client").$Enums.LeadStatus;
         operatorId: string | null;
-        notes: string | null;
         interest: string | null;
         source: string | null;
+        notes: string | null;
     }>;
     remove(id: string, user: AuthUser): Promise<{
         id: string;
@@ -102,8 +102,8 @@ export declare class LeadsService {
         updatedAt: Date;
         status: import("@prisma/client").$Enums.LeadStatus;
         operatorId: string | null;
-        notes: string | null;
         interest: string | null;
         source: string | null;
+        notes: string | null;
     }>;
 }

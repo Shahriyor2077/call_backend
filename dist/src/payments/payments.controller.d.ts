@@ -82,10 +82,10 @@ export declare class PaymentsController {
         } | null;
     } & {
         id: string;
+        isDeleted: boolean;
         centerId: string;
         createdAt: Date;
         updatedAt: Date;
-        isDeleted: boolean;
         operatorId: string | null;
         type: import("@prisma/client").$Enums.PaymentType;
         studentId: string;
@@ -104,10 +104,10 @@ export declare class PaymentsController {
         };
     } & {
         id: string;
+        isDeleted: boolean;
         centerId: string;
         createdAt: Date;
         updatedAt: Date;
-        isDeleted: boolean;
         operatorId: string | null;
         type: import("@prisma/client").$Enums.PaymentType;
         studentId: string;
@@ -121,10 +121,10 @@ export declare class PaymentsController {
     }>;
     update(id: string, dto: any, user: AuthUser): Promise<{
         id: string;
+        isDeleted: boolean;
         centerId: string;
         createdAt: Date;
         updatedAt: Date;
-        isDeleted: boolean;
         operatorId: string | null;
         type: import("@prisma/client").$Enums.PaymentType;
         studentId: string;
@@ -138,10 +138,10 @@ export declare class PaymentsController {
     }>;
     refund(id: string, user: AuthUser): Promise<{
         id: string;
+        isDeleted: boolean;
         centerId: string;
         createdAt: Date;
         updatedAt: Date;
-        isDeleted: boolean;
         operatorId: string | null;
         type: import("@prisma/client").$Enums.PaymentType;
         studentId: string;
@@ -155,10 +155,10 @@ export declare class PaymentsController {
     }>;
     remove(id: string, user: AuthUser): Promise<{
         id: string;
+        isDeleted: boolean;
         centerId: string;
         createdAt: Date;
         updatedAt: Date;
-        isDeleted: boolean;
         operatorId: string | null;
         type: import("@prisma/client").$Enums.PaymentType;
         studentId: string;

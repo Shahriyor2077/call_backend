@@ -79,6 +79,7 @@ model User {
   name      String
   role      Role
   isActive  Boolean  @default(true)
+  isDeleted Boolean  @default(false)
   centerId  String?
   center    Center?  @relation(fields: [centerId], references: [id])
   createdAt DateTime @default(now())

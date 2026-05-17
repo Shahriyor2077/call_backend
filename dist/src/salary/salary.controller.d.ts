@@ -15,10 +15,10 @@ export declare class SalaryController {
             };
         } & {
             id: string;
+            isDeleted: boolean;
             centerId: string;
             createdAt: Date;
             updatedAt: Date;
-            isDeleted: boolean;
             operatorId: string | null;
             type: import("@prisma/client").$Enums.PaymentType;
             studentId: string;
@@ -64,8 +64,8 @@ export declare class SalaryController {
         notes: string | null;
         amount: import("@prisma/client-runtime-utils").Decimal;
         paidAt: Date;
-        bonusAmount: import("@prisma/client-runtime-utils").Decimal;
         totalAmount: import("@prisma/client-runtime-utils").Decimal;
+        bonusAmount: import("@prisma/client-runtime-utils").Decimal;
         paidBy: string | null;
     }>;
     getAllPaymentHistory(month?: string): Promise<{
@@ -77,8 +77,8 @@ export declare class SalaryController {
         notes: string | null;
         amount: import("@prisma/client-runtime-utils").Decimal;
         paidAt: Date;
-        bonusAmount: import("@prisma/client-runtime-utils").Decimal;
         totalAmount: import("@prisma/client-runtime-utils").Decimal;
+        bonusAmount: import("@prisma/client-runtime-utils").Decimal;
         paidBy: string | null;
     }[]>;
     getPaymentHistory(operatorId: string): Promise<{
@@ -90,8 +90,8 @@ export declare class SalaryController {
         notes: string | null;
         amount: import("@prisma/client-runtime-utils").Decimal;
         paidAt: Date;
-        bonusAmount: import("@prisma/client-runtime-utils").Decimal;
         totalAmount: import("@prisma/client-runtime-utils").Decimal;
+        bonusAmount: import("@prisma/client-runtime-utils").Decimal;
         paidBy: string | null;
     }[]>;
 }

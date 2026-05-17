@@ -41,7 +41,6 @@ export class SubscriptionsService {
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + days);
 
-    const existing = await this.prisma.subscription.findUnique({ where: { centerId } });
     const freePlan = await this.prisma.plan.findFirst({ where: { isActive: true }, orderBy: { price: 'asc' } });
 
     if (!freePlan) throw new NotFoundException('Hech bir tarif mavjud emas');
@@ -75,7 +74,10 @@ export class SubscriptionsService {
   async checkAndUpdateExpired() {
     const now = new Date();
     await this.prisma.subscription.updateMany({
-      where: { endDate: { lt: now }, status: SubscriptionStatus.ACTIVE },
+      where: {
+        endDate: { lt: now },
+        status: { in: [SubscriptionStatus.ACTIVE, SubscriptionStatus.DEMO] },
+      },
       data: { status: SubscriptionStatus.EXPIRED },
     });
   }

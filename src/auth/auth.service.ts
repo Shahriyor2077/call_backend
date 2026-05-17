@@ -23,7 +23,7 @@ export class AuthService {
       },
     });
 
-    if (!user) {
+    if (!user || (user as any).isDeleted) {
       throw new UnauthorizedException('Telefon raqam yoki parol noto\'g\'ri');
     }
 
@@ -81,7 +81,7 @@ export class AuthService {
         where: { id: payload.sub },
       });
 
-      if (!user || !user.isActive) {
+      if (!user || !user.isActive || (user as any).isDeleted) {
         throw new UnauthorizedException('Foydalanuvchi topilmadi yoki bloklangan');
       }
 

@@ -22,19 +22,19 @@ let UsersService = class UsersService {
         this.authService = authService;
     }
     async findAll(requestingUser, roleFilter) {
-        const where = { isActive: true };
+        const where = { isDeleted: false };
         if (requestingUser.role === client_1.Role.ADMIN) {
             where.centerId = requestingUser.centerId;
             where.role = client_1.Role.OPERATOR;
         }
-        if (roleFilter) {
+        else if (requestingUser.role === client_1.Role.SUPERADMIN && roleFilter) {
             where.role = roleFilter;
         }
         return this.prisma.user.findMany({
             where,
             select: {
                 id: true, name: true, phone: true, role: true,
-                isActive: true, centerId: true, center: true,
+                isActive: true, isDeleted: true, centerId: true, center: true,
                 createdAt: true, salarySetting: true,
             },
             orderBy: { createdAt: 'desc' },
@@ -45,7 +45,7 @@ let UsersService = class UsersService {
             where: { id },
             select: {
                 id: true, name: true, phone: true, role: true,
-                isActive: true, centerId: true, center: true,
+                isActive: true, isDeleted: true, centerId: true, center: true,
                 createdAt: true, salarySetting: true,
             },
         });
@@ -65,7 +65,7 @@ let UsersService = class UsersService {
             });
             if (sub && sub.status === 'ACTIVE') {
                 const operatorCount = await this.prisma.user.count({
-                    where: { centerId: requestingUser.centerId, role: client_1.Role.OPERATOR, isActive: true },
+                    where: { centerId: requestingUser.centerId, role: client_1.Role.OPERATOR, isActive: true, isDeleted: false },
                 });
                 if (operatorCount >= sub.plan.operatorLimit) {
                     throw new common_1.BadRequestException(`Tarif limiti: maksimal ${sub.plan.operatorLimit} ta operator`);
@@ -98,13 +98,61 @@ let UsersService = class UsersService {
         if (dto.password) {
             dto.password = await this.authService.hashPassword(dto.password);
         }
+        if (dto.phone && dto.phone !== user.phone) {
+            const existing = await this.prisma.user.findUnique({ where: { phone: dto.phone } });
+            if (existing)
+                throw new common_1.BadRequestException('Bu telefon raqam allaqachon mavjud');
+        }
+        try {
+            return await this.prisma.user.update({
+                where: { id },
+                data: dto,
+                select: {
+                    id: true, name: true, phone: true, role: true,
+                    isActive: true, centerId: true, updatedAt: true,
+                },
+            });
+        }
+        catch (e) {
+            if (e?.code === 'P2002')
+                throw new common_1.BadRequestException('Bu telefon raqam allaqachon mavjud');
+            throw e;
+        }
+    }
+    async block(id, requestingUser) {
+        const user = await this.findOne(id);
+        if (requestingUser.role === client_1.Role.ADMIN) {
+            if (user.centerId !== requestingUser.centerId)
+                throw new common_1.ForbiddenException();
+            if (user.role !== client_1.Role.OPERATOR)
+                throw new common_1.ForbiddenException('Admin faqat operatorni bloklashi mumkin');
+        }
+        if (user.isDeleted)
+            throw new common_1.BadRequestException('Foydalanuvchi o\'chirilgan');
+        if (!user.isActive)
+            throw new common_1.BadRequestException('Foydalanuvchi allaqachon bloklangan');
         return this.prisma.user.update({
             where: { id },
-            data: dto,
-            select: {
-                id: true, name: true, phone: true, role: true,
-                isActive: true, centerId: true, updatedAt: true,
-            },
+            data: { isActive: false },
+            select: { id: true, name: true, isActive: true },
+        });
+    }
+    async unblock(id, requestingUser) {
+        const user = await this.findOne(id);
+        if (requestingUser.role === client_1.Role.ADMIN) {
+            if (user.centerId !== requestingUser.centerId)
+                throw new common_1.ForbiddenException();
+            if (user.role !== client_1.Role.OPERATOR)
+                throw new common_1.ForbiddenException('Admin faqat operatorni faollashtirishi mumkin');
+        }
+        if (user.isDeleted)
+            throw new common_1.BadRequestException('Foydalanuvchi o\'chirilgan');
+        if (user.isActive)
+            throw new common_1.BadRequestException('Foydalanuvchi allaqachon faol');
+        return this.prisma.user.update({
+            where: { id },
+            data: { isActive: true },
+            select: { id: true, name: true, isActive: true },
         });
     }
     async remove(id, requestingUser) {
@@ -115,7 +163,10 @@ let UsersService = class UsersService {
             if (user.role !== client_1.Role.OPERATOR)
                 throw new common_1.ForbiddenException('Admin faqat operatorni o\'chira oladi');
         }
-        await this.prisma.user.update({ where: { id }, data: { isActive: false } });
+        await this.prisma.user.update({
+            where: { id },
+            data: { isDeleted: true, isActive: false, phone: `deleted_${id}_${user.phone}` },
+        });
         return { id, deleted: true };
     }
     async updateSalaryPercentage(operatorId, percentage, adminCenterId, fixedAmount) {
@@ -125,13 +176,9 @@ let UsersService = class UsersService {
         if (percentage < 1 || percentage > 50) {
             throw new common_1.BadRequestException('Foiz 1% dan 50% gacha bo\'lishi kerak');
         }
-        const data = { percentage, updatedAt: new Date() };
-        if (fixedAmount !== undefined) {
-            data.fixedAmount = fixedAmount;
-        }
         return this.prisma.salarySetting.upsert({
             where: { operatorId },
-            update: data,
+            update: { percentage, fixedAmount: fixedAmount ?? 0, updatedAt: new Date() },
             create: { operatorId, percentage, fixedAmount: fixedAmount ?? 0, updatedAt: new Date() },
         });
     }

@@ -14,7 +14,7 @@ const class_validator_1 = require("class-validator");
 const client_1 = require("@prisma/client");
 class CreatePaymentDto {
     studentId;
-    amount;
+    totalAmount;
     discountAmount;
     type;
     method;
@@ -31,7 +31,7 @@ __decorate([
     (0, class_validator_1.IsNumber)(),
     (0, class_validator_1.IsPositive)(),
     __metadata("design:type", Number)
-], CreatePaymentDto.prototype, "amount", void 0);
+], CreatePaymentDto.prototype, "totalAmount", void 0);
 __decorate([
     (0, class_validator_1.IsNumber)(),
     (0, class_validator_1.Min)(0),

@@ -35,7 +35,7 @@ let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(pas
                 },
             },
         });
-        if (!user || !user.isActive)
+        if (!user || !user.isActive || user.isDeleted)
             throw new common_1.UnauthorizedException();
         if (user.role !== client_1.Role.SUPERADMIN) {
             const sub = user.center?.subscription;

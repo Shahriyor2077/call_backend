@@ -8,7 +8,7 @@ export class CreatePaymentDto {
 
   @IsNumber()
   @IsPositive()
-  amount: number;
+  totalAmount: number;
 
   @IsNumber()
   @Min(0)

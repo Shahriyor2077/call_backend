@@ -7,10 +7,10 @@ export declare class StudentsController {
     findAll(user: AuthUser): import("@prisma/client").Prisma.PrismaPromise<({
         payments: {
             id: string;
+            isDeleted: boolean;
             centerId: string;
             createdAt: Date;
             updatedAt: Date;
-            isDeleted: boolean;
             operatorId: string | null;
             type: import("@prisma/client").$Enums.PaymentType;
             studentId: string;
@@ -77,26 +77,26 @@ export declare class StudentsController {
         id: string;
         phone: string;
         name: string;
+        isDeleted: boolean;
         centerId: string;
         createdAt: Date;
         updatedAt: Date;
-        isDeleted: boolean;
         operatorId: string | null;
+        notes: string | null;
         surname: string | null;
         parentPhone: string | null;
         email: string | null;
         gender: string | null;
         birthDate: Date | null;
-        notes: string | null;
     })[]>;
     getDebtors(user: AuthUser): Promise<any[]>;
     findOne(id: string, user: AuthUser): Promise<{
         payments: {
             id: string;
+            isDeleted: boolean;
             centerId: string;
             createdAt: Date;
             updatedAt: Date;
-            isDeleted: boolean;
             operatorId: string | null;
             type: import("@prisma/client").$Enums.PaymentType;
             studentId: string;
@@ -163,49 +163,49 @@ export declare class StudentsController {
         id: string;
         phone: string;
         name: string;
+        isDeleted: boolean;
         centerId: string;
         createdAt: Date;
         updatedAt: Date;
-        isDeleted: boolean;
         operatorId: string | null;
+        notes: string | null;
         surname: string | null;
         parentPhone: string | null;
         email: string | null;
         gender: string | null;
         birthDate: Date | null;
-        notes: string | null;
     }>;
     create(dto: CreateStudentDto, user: AuthUser): Promise<{
         id: string;
         phone: string;
         name: string;
+        isDeleted: boolean;
         centerId: string;
         createdAt: Date;
         updatedAt: Date;
-        isDeleted: boolean;
         operatorId: string | null;
+        notes: string | null;
         surname: string | null;
         parentPhone: string | null;
         email: string | null;
         gender: string | null;
         birthDate: Date | null;
-        notes: string | null;
     }>;
     update(id: string, dto: any, user: AuthUser): Promise<{
         id: string;
         phone: string;
         name: string;
+        isDeleted: boolean;
         centerId: string;
         createdAt: Date;
         updatedAt: Date;
-        isDeleted: boolean;
         operatorId: string | null;
+        notes: string | null;
         surname: string | null;
         parentPhone: string | null;
         email: string | null;
         gender: string | null;
         birthDate: Date | null;
-        notes: string | null;
     }>;
     enroll(studentId: string, groupId: string, user: AuthUser): Promise<{
         id: string;
@@ -218,16 +218,16 @@ export declare class StudentsController {
         id: string;
         phone: string;
         name: string;
+        isDeleted: boolean;
         centerId: string;
         createdAt: Date;
         updatedAt: Date;
-        isDeleted: boolean;
         operatorId: string | null;
+        notes: string | null;
         surname: string | null;
         parentPhone: string | null;
         email: string | null;
         gender: string | null;
         birthDate: Date | null;
-        notes: string | null;
     }>;
 }

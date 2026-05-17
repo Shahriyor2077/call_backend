@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { Prisma, Role } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuthUser } from '../common/types';
@@ -113,15 +113,25 @@ export class SalaryService {
     operatorId: string,
     data: { month: string; amount: number; bonusAmount: number; fixedAmount: number; notes?: string },
   ) {
-    const totalAmount = data.amount + data.bonusAmount + data.fixedAmount;
+    const existing = await this.prisma.salaryPayment.findFirst({
+      where: { operatorId, month: data.month },
+    });
+    if (existing) {
+      throw new BadRequestException(`${data.month} uchun maosh allaqachon to'langan`);
+    }
+
+    const amount = Number(data.amount);
+    const bonusAmount = Number(data.bonusAmount);
+    const fixedAmount = Number(data.fixedAmount);
+    const totalAmount = amount + bonusAmount + fixedAmount;
 
     const payment = await this.prisma.salaryPayment.create({
       data: {
         operatorId,
         month: data.month,
-        amount: data.amount,
-        bonusAmount: data.bonusAmount,
-        fixedAmount: data.fixedAmount,
+        amount,
+        bonusAmount,
+        fixedAmount,
         totalAmount,
         notes: data.notes,
         paidBy: user.name,

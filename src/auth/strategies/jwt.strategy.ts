@@ -28,7 +28,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       },
     });
 
-    if (!user || !user.isActive) throw new UnauthorizedException();
+    if (!user || !user.isActive || (user as any).isDeleted) throw new UnauthorizedException();
 
     if (user.role !== Role.SUPERADMIN) {
       const sub = user.center?.subscription;

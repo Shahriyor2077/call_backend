@@ -96,9 +96,16 @@ export class GroupsService {
     }
 
     const data: any = { ...dto };
-    if (data.startDate) data.startDate = new Date(data.startDate).toISOString();
-    if (data.endDate) data.endDate = new Date(data.endDate).toISOString();
-    else delete data.endDate;
+    if (data.startDate !== undefined) {
+      data.startDate = data.startDate ? new Date(data.startDate).toISOString() : null;
+    } else {
+      delete data.startDate;
+    }
+    if (data.endDate !== undefined) {
+      data.endDate = data.endDate ? new Date(data.endDate).toISOString() : null;
+    } else {
+      delete data.endDate;
+    }
     return this.prisma.group.update({ where: { id }, data });
   }
 

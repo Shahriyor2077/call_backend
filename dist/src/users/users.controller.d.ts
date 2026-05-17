@@ -10,6 +10,7 @@ export declare class UsersController {
         name: string;
         role: import("@prisma/client").$Enums.Role;
         isActive: boolean;
+        isDeleted: boolean;
         centerId: string | null;
         createdAt: Date;
         center: {
@@ -24,9 +25,9 @@ export declare class UsersController {
         salarySetting: {
             id: string;
             updatedAt: Date;
+            operatorId: string;
             percentage: import("@prisma/client-runtime-utils").Decimal;
             fixedAmount: import("@prisma/client-runtime-utils").Decimal;
-            operatorId: string;
         } | null;
     }[]>;
     findOne(id: string): Promise<{
@@ -35,6 +36,7 @@ export declare class UsersController {
         name: string;
         role: import("@prisma/client").$Enums.Role;
         isActive: boolean;
+        isDeleted: boolean;
         centerId: string | null;
         createdAt: Date;
         center: {
@@ -49,9 +51,9 @@ export declare class UsersController {
         salarySetting: {
             id: string;
             updatedAt: Date;
+            operatorId: string;
             percentage: import("@prisma/client-runtime-utils").Decimal;
             fixedAmount: import("@prisma/client-runtime-utils").Decimal;
-            operatorId: string;
         } | null;
     }>;
     create(dto: CreateUserDto, user: AuthUser): Promise<{
@@ -72,6 +74,16 @@ export declare class UsersController {
         centerId: string | null;
         updatedAt: Date;
     }>;
+    block(id: string, user: AuthUser): Promise<{
+        id: string;
+        name: string;
+        isActive: boolean;
+    }>;
+    unblock(id: string, user: AuthUser): Promise<{
+        id: string;
+        name: string;
+        isActive: boolean;
+    }>;
     remove(id: string, user: AuthUser): Promise<{
         id: string;
         deleted: boolean;
@@ -82,8 +94,8 @@ export declare class UsersController {
     }, user: AuthUser): Promise<{
         id: string;
         updatedAt: Date;
+        operatorId: string;
         percentage: import("@prisma/client-runtime-utils").Decimal;
         fixedAmount: import("@prisma/client-runtime-utils").Decimal;
-        operatorId: string;
     }>;
 }

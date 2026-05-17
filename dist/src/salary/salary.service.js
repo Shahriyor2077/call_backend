@@ -98,14 +98,23 @@ let SalaryService = class SalaryService {
         };
     }
     async paySalary(user, operatorId, data) {
-        const totalAmount = data.amount + data.bonusAmount + data.fixedAmount;
+        const existing = await this.prisma.salaryPayment.findFirst({
+            where: { operatorId, month: data.month },
+        });
+        if (existing) {
+            throw new common_1.BadRequestException(`${data.month} uchun maosh allaqachon to'langan`);
+        }
+        const amount = Number(data.amount);
+        const bonusAmount = Number(data.bonusAmount);
+        const fixedAmount = Number(data.fixedAmount);
+        const totalAmount = amount + bonusAmount + fixedAmount;
         const payment = await this.prisma.salaryPayment.create({
             data: {
                 operatorId,
                 month: data.month,
-                amount: data.amount,
-                bonusAmount: data.bonusAmount,
-                fixedAmount: data.fixedAmount,
+                amount,
+                bonusAmount,
+                fixedAmount,
                 totalAmount,
                 notes: data.notes,
                 paidBy: user.name,

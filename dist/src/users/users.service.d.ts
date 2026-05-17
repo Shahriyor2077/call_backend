@@ -11,6 +11,7 @@ export declare class UsersService {
         name: string;
         role: import("@prisma/client").$Enums.Role;
         isActive: boolean;
+        isDeleted: boolean;
         centerId: string | null;
         createdAt: Date;
         center: {
@@ -25,9 +26,9 @@ export declare class UsersService {
         salarySetting: {
             id: string;
             updatedAt: Date;
+            operatorId: string;
             percentage: import("@prisma/client-runtime-utils").Decimal;
             fixedAmount: import("@prisma/client-runtime-utils").Decimal;
-            operatorId: string;
         } | null;
     }[]>;
     findOne(id: string): Promise<{
@@ -36,6 +37,7 @@ export declare class UsersService {
         name: string;
         role: import("@prisma/client").$Enums.Role;
         isActive: boolean;
+        isDeleted: boolean;
         centerId: string | null;
         createdAt: Date;
         center: {
@@ -50,9 +52,9 @@ export declare class UsersService {
         salarySetting: {
             id: string;
             updatedAt: Date;
+            operatorId: string;
             percentage: import("@prisma/client-runtime-utils").Decimal;
             fixedAmount: import("@prisma/client-runtime-utils").Decimal;
-            operatorId: string;
         } | null;
     }>;
     create(dto: CreateUserDto, requestingUser: any): Promise<{
@@ -73,6 +75,16 @@ export declare class UsersService {
         centerId: string | null;
         updatedAt: Date;
     }>;
+    block(id: string, requestingUser: any): Promise<{
+        id: string;
+        name: string;
+        isActive: boolean;
+    }>;
+    unblock(id: string, requestingUser: any): Promise<{
+        id: string;
+        name: string;
+        isActive: boolean;
+    }>;
     remove(id: string, requestingUser: any): Promise<{
         id: string;
         deleted: boolean;
@@ -80,8 +92,8 @@ export declare class UsersService {
     updateSalaryPercentage(operatorId: string, percentage: number, adminCenterId: string, fixedAmount?: number): Promise<{
         id: string;
         updatedAt: Date;
+        operatorId: string;
         percentage: import("@prisma/client-runtime-utils").Decimal;
         fixedAmount: import("@prisma/client-runtime-utils").Decimal;
-        operatorId: string;
     }>;
 }

@@ -149,10 +149,18 @@ let PaymentsService = class PaymentsService {
         });
         if (!student)
             throw new common_1.NotFoundException('Talaba topilmadi');
+        const discountAmount = Number(dto.discountAmount ?? 0);
+        const paidAmount = Number(dto.totalAmount) - discountAmount;
+        if (paidAmount < 0)
+            throw new common_1.BadRequestException('Chegirma to\'lov miqdoridan katta bo\'lishi mumkin emas');
         return this.prisma.payment.create({
             data: {
-                ...dto,
-                discountAmount: dto.discountAmount ?? 0,
+                studentId: dto.studentId,
+                amount: paidAmount,
+                discountAmount,
+                type: dto.type,
+                method: dto.method,
+                notes: dto.notes,
                 centerId: user.centerId,
                 operatorId: user.id,
                 paidAt: dto.paidAt ? new Date(dto.paidAt) : new Date(),
@@ -185,7 +193,18 @@ let PaymentsService = class PaymentsService {
         });
         if (!payment)
             throw new common_1.NotFoundException('To\'lov topilmadi');
-        return this.prisma.payment.update({ where: { id }, data: dto });
+        const updateData = {};
+        if (dto.notes !== undefined)
+            updateData.notes = dto.notes;
+        if (dto.totalAmount !== undefined) {
+            const discountAmount = Number(dto.discountAmount ?? payment.discountAmount ?? 0);
+            const paidAmount = Number(dto.totalAmount) - discountAmount;
+            if (paidAmount < 0)
+                throw new common_1.BadRequestException('Chegirma to\'lov miqdoridan katta bo\'lishi mumkin emas');
+            updateData.amount = paidAmount;
+            updateData.discountAmount = discountAmount;
+        }
+        return this.prisma.payment.update({ where: { id }, data: updateData });
     }
     async remove(id, user) {
         if (user.role !== client_1.Role.ADMIN)

@@ -15,8 +15,16 @@ async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.setGlobalPrefix('api/v1');
     app.useGlobalPipes(new common_1.ValidationPipe({ whitelist: true, transform: true }));
-    const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:3000').split(',');
-    app.enableCors({ origin: allowedOrigins });
+    app.enableCors({
+        origin: [
+            'https://call-frontend-xi.vercel.app',
+            'http://localhost:3000',
+            /\.vercel\.app$/,
+        ],
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
+        credentials: true,
+    });
     const port = process.env.PORT || 3001;
     await app.listen(port);
     console.log(`Backend ishga tushdi: http://localhost:${port}/api/v1`);
