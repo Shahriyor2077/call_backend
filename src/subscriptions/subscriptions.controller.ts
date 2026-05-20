@@ -33,4 +33,10 @@ export class SubscriptionsController {
   extend(@Param('id') id: string, @Body('days') days: number) {
     return this.subscriptionsService.extend(id, days);
   }
+
+  @Put(':id/cancel')
+  @Roles(Role.SUPERADMIN)
+  cancel(@Param('id') id: string) {
+    return this.subscriptionsService.cancel(id);
+  }
 }

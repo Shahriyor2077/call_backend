@@ -2,10 +2,21 @@ import { Injectable, NotFoundException, BadRequestException, ForbiddenException 
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCenterDto } from './dto/create-center.dto';
 import * as bcrypt from 'bcryptjs';
+import { SubscriptionStatus } from '@prisma/client';
 
 @Injectable()
 export class CentersService {
   constructor(private prisma: PrismaService) { }
+
+  private async expireOutdatedSubscriptions() {
+    await this.prisma.subscription.updateMany({
+      where: {
+        endDate: { lt: new Date() },
+        status: { in: [SubscriptionStatus.ACTIVE, SubscriptionStatus.DEMO] },
+      },
+      data: { status: SubscriptionStatus.EXPIRED },
+    });
+  }
 
   async findAllPublic() {
     return this.prisma.center.findMany({
@@ -20,6 +31,7 @@ export class CentersService {
   }
 
   async findAll() {
+    await this.expireOutdatedSubscriptions();
     const centers = await this.prisma.center.findMany({
       include: {
         subscription: { include: { plan: true } },

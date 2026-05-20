@@ -6,7 +6,8 @@ import { PrismaService } from '../prisma/prisma.service';
 export class SubscriptionsService {
   constructor(private prisma: PrismaService) {}
 
-  findAll() {
+  async findAll() {
+    await this.checkAndUpdateExpired();
     return this.prisma.subscription.findMany({
       include: { center: true, plan: true },
       orderBy: { endDate: 'asc' },
@@ -68,6 +69,15 @@ export class SubscriptionsService {
     return this.prisma.subscription.update({
       where: { id },
       data: { endDate: newEndDate, status: SubscriptionStatus.ACTIVE },
+    });
+  }
+
+  async cancel(id: string) {
+    const sub = await this.prisma.subscription.findUnique({ where: { id } });
+    if (!sub) throw new NotFoundException('Obuna topilmadi');
+    return this.prisma.subscription.update({
+      where: { id },
+      data: { status: SubscriptionStatus.EXPIRED },
     });
   }
 
