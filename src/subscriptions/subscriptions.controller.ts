@@ -3,12 +3,20 @@ import { SubscriptionsService } from './subscriptions.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Role } from '@prisma/client';
+import type { AuthUser } from '../common/types';
 
 @Controller('subscriptions')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class SubscriptionsController {
   constructor(private subscriptionsService: SubscriptionsService) {}
+
+  @Get('my')
+  @Roles(Role.ADMIN, Role.OPERATOR)
+  getMy(@CurrentUser() user: AuthUser) {
+    return this.subscriptionsService.findByCenterId(user.centerId!);
+  }
 
   @Get()
   @Roles(Role.SUPERADMIN)

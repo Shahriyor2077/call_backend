@@ -35,7 +35,7 @@ async function main() {
       data: [
         { name: "Boshlang'ich", price: 299000, operatorLimit: 3, durationDays: 30 },
         { name: 'Standart', price: 599000, operatorLimit: 10, durationDays: 30 },
-        { name: 'Professional', price: 999000, operatorLimit: 30, durationDays: 30 },
+        { name: 'Professional', price: 999000, operatorLimit: 15, durationDays: 30 },
         { name: 'Yillik Standart', price: 5990000, operatorLimit: 10, durationDays: 365 },
       ],
     });

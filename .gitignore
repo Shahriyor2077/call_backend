@@ -9,3 +9,4 @@ dist/
 backups/
 *.sql
 *.sql.gz
+!prisma/migrations/20260612070000_add_user_soft_delete/migration.sql

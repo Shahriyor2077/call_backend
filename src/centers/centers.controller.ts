@@ -31,6 +31,13 @@ export class CentersController {
     return this.centersService.getStats();
   }
 
+  @Get(':id/detail-stats')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.SUPERADMIN)
+  detailStats(@Param('id') id: string) {
+    return this.centersService.getDetailStats(id);
+  }
+
   @Get(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.SUPERADMIN)
