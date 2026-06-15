@@ -5,7 +5,7 @@ import { AuthUser } from '../common/types';
 
 @Injectable()
 export class CoursesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   findAll(user: AuthUser) {
     return this.prisma.course.findMany({
