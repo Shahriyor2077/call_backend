@@ -6,7 +6,7 @@ import { AuthUser } from '../common/types';
 
 @Injectable()
 export class GroupsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   findAll(user: AuthUser) {
     return this.prisma.group.findMany({
@@ -56,18 +56,33 @@ export class GroupsService {
     const data: any = {
       ...dto,
       centerId: user.centerId,
-      meetLink:  dto.meetLink  || null,
-      platform:  dto.platform  || null,
-      room:      dto.room      || null,
-      address:   dto.address   || null,
+      meetLink: dto.meetLink || null,
+      platform: dto.platform || null,
+      room: dto.room || null,
+      address: dto.address || null,
       teacherId: dto.teacherId || null,
     };
 
-    if (data.startDate) data.startDate = new Date(data.startDate);
-    else delete data.startDate;
+    if (data.startDate) {
+      data.startDate = new Date(data.startDate);
 
-    if (data.endDate) data.endDate = new Date(data.endDate);
-    else delete data.endDate;
+      // Auto-calculate endDate based on duration
+      if (data.duration && data.durationUnit) {
+        const endDate = new Date(data.startDate);
+        if (data.durationUnit === 'month') {
+          endDate.setMonth(endDate.getMonth() + data.duration);
+        } else if (data.durationUnit === 'week') {
+          endDate.setDate(endDate.getDate() + (data.duration * 7));
+        }
+        data.endDate = endDate;
+      } else if (data.endDate) {
+        data.endDate = new Date(data.endDate);
+      }
+    } else {
+      delete data.startDate;
+      if (data.endDate) data.endDate = new Date(data.endDate);
+      else delete data.endDate;
+    }
 
     try {
       return await this.prisma.group.create({ data });
@@ -96,16 +111,47 @@ export class GroupsService {
     }
 
     const data: any = { ...dto };
+
+    // Handle startDate
     if (data.startDate !== undefined) {
-      data.startDate = data.startDate ? new Date(data.startDate).toISOString() : null;
+      data.startDate = data.startDate ? new Date(data.startDate) : null;
+
+      // Auto-calculate endDate if duration is provided
+      if (data.startDate && data.duration && data.durationUnit) {
+        const endDate = new Date(data.startDate);
+        if (data.durationUnit === 'month') {
+          endDate.setMonth(endDate.getMonth() + data.duration);
+        } else if (data.durationUnit === 'week') {
+          endDate.setDate(endDate.getDate() + (data.duration * 7));
+        }
+        data.endDate = endDate;
+      } else if (data.endDate !== undefined) {
+        data.endDate = data.endDate ? new Date(data.endDate) : null;
+      }
     } else {
       delete data.startDate;
+      if (data.endDate !== undefined) {
+        data.endDate = data.endDate ? new Date(data.endDate) : null;
+      } else {
+        delete data.endDate;
+      }
     }
-    if (data.endDate !== undefined) {
-      data.endDate = data.endDate ? new Date(data.endDate).toISOString() : null;
-    } else {
-      delete data.endDate;
+
+    // If duration changed but startDate exists, recalculate endDate
+    if ((data.duration !== undefined || data.durationUnit !== undefined) && group.startDate) {
+      const duration = data.duration ?? group.duration;
+      const durationUnit = data.durationUnit ?? group.durationUnit;
+      if (duration && durationUnit) {
+        const endDate = new Date(group.startDate);
+        if (durationUnit === 'month') {
+          endDate.setMonth(endDate.getMonth() + duration);
+        } else if (durationUnit === 'week') {
+          endDate.setDate(endDate.getDate() + (duration * 7));
+        }
+        data.endDate = endDate;
+      }
     }
+
     return this.prisma.group.update({ where: { id }, data });
   }
 

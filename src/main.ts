@@ -22,6 +22,9 @@ async function bootstrap() {
     origin: [
       'https://call-frontend-xi.vercel.app',
       'http://localhost:3000',
+      'https://onelms.uz',
+      'https://www.onelms.uz',
+      'https://api.onelms.uz',
       /\.vercel\.app$/,
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
